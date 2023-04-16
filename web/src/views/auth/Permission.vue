@@ -1,0 +1,3 @@
+<template>
+  Permission Page
+</template>
