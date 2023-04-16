@@ -48,7 +48,7 @@ func main() {
 	rabbit.InitRabbit(db, r)
 
 	// rabbitadmin
-	rabbitadmin.Init(db, r)
+	rabbitadmin.InitServer(db, r)
 
 	if serverAddr[0] == ':' || strings.HasPrefix(serverAddr, "0.0.0.0:") {
 		log.Printf("Serving HTTP on (http://localhost:%s/) ... \n", strings.Split(serverAddr, ":")[1])

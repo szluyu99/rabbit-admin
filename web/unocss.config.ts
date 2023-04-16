@@ -4,9 +4,22 @@ import {
   presetUno,
   presetWebFonts,
 } from 'unocss'
+
 import { presetForms } from '@julr/unocss-preset-forms'
+import { colors } from 'unocss/preset-mini'
 
 export default defineConfig({
+  theme: {
+    colors: {
+      success: colors.green,
+      info: colors.blue,
+      warning: colors.yellow,
+      error: colors.red,
+      primary: colors.indigo,
+      secondary: colors.teal,
+      accent: colors.pink,
+    },
+  },
   shortcuts: [
     ['f-c-c', 'flex items-center justify-center'],
     ['wh-full', 'w-full h-full'],
@@ -16,20 +29,18 @@ export default defineConfig({
   presets: [
     presetUno(),
     presetForms(),
-    // presetAttributify(),
     presetIcons({
       // scale: 1.2,
       warn: true,
       extraProperties: {
-        cursor: 'pointer',
+        // cursor: 'pointer',
         // display: 'inline-block',
       },
     }),
     presetWebFonts({
+      provider: 'bunny',
       fonts: {
-        sans: 'DM Sans',
-        serif: 'DM Serif Display',
-        mono: 'DM Mono',
+        sans: 'Inter',
       },
     }),
   ],

@@ -13,7 +13,7 @@ type ServerManager struct {
 	db *gorm.DB
 }
 
-func Init(db *gorm.DB, r *gin.Engine) {
+func InitServer(db *gorm.DB, r *gin.Engine) {
 	m := NewManager(db)
 	if err := m.Migrate(db); err != nil {
 		panic(err)

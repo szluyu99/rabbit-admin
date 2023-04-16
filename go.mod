@@ -5,7 +5,7 @@ go 1.20
 require (
 	github.com/gin-gonic/gin v1.9.0
 	github.com/restsend/gormpher v0.0.0-20230412025803-2897afaf7ddb
-	github.com/restsend/rabbit v0.0.0-20230415182954-a92794e6551c
+	github.com/restsend/rabbit v0.0.0-20230416083438-baa9d1a32fe6
 	gorm.io/gorm v1.25.0
 )
 
