@@ -4,7 +4,7 @@ import (
 	"log"
 
 	"github.com/gin-gonic/gin"
-	"github.com/restsend/rabbit"
+	"github.com/szluyu99/rabbit"
 	"github.com/szluyu99/rabbit-admin/internal/models"
 	"gorm.io/gorm"
 )

@@ -7,4 +7,6 @@
   "files.associations": {
     "*.css": "postcss"
   },
+  "css.validate": false,
+  "scss.validate": false,
 }

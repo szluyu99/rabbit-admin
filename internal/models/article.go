@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/restsend/gormpher"
-	"github.com/restsend/rabbit"
+	"github.com/szluyu99/rabbit"
 	"gorm.io/gorm"
 )
 

@@ -7,6 +7,7 @@ import (
 
 func (m *ServerManager) categoryObject() gormpher.WebObject {
 	return gormpher.WebObject{
+		Name:        "category",
 		Model:       &models.Category{},
 		GetDB:       m.getDB,
 		Editables:   []string{"Name"},

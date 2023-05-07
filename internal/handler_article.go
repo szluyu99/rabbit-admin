@@ -10,6 +10,7 @@ import (
 
 func (m *ServerManager) articleObject() gormpher.WebObject {
 	return gormpher.WebObject{
+		Name:        "article",
 		Model:       &models.Article{},
 		GetDB:       m.getDB,
 		Editables:   []string{"Title", "Desc", "Content", "Img", "Type", "Status", "IsTop", "IsDelete", "OriginalUrl"},

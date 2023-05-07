@@ -5,11 +5,12 @@ go 1.20
 require (
 	github.com/gin-gonic/gin v1.9.0
 	github.com/restsend/gormpher v0.0.0-20230412025803-2897afaf7ddb
-	github.com/restsend/rabbit v0.0.0-20230416083438-baa9d1a32fe6
+	github.com/szluyu99/rabbit v0.0.0-20230503171217-7269bddb6185
 	gorm.io/gorm v1.25.0
 )
 
-// replace github.com/restsend/rabbit => ../rabbit
+replace github.com/szluyu99/rabbit => ../rabbit
+
 // replace github.com/restsend/gormpher => ../../gormpher
 
 require (
@@ -46,5 +47,5 @@ require (
 	google.golang.org/protobuf v1.28.1 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	gorm.io/driver/mysql v1.5.0 // indirect
-	gorm.io/driver/sqlite v1.5.0 // indirect
+	gorm.io/driver/sqlite v1.4.4 // indirect
 )

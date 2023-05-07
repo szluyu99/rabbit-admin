@@ -8,7 +8,7 @@ import (
 	"strings"
 
 	"github.com/gin-gonic/gin"
-	"github.com/restsend/rabbit"
+	"github.com/szluyu99/rabbit"
 	rabbitadmin "github.com/szluyu99/rabbit-admin/internal"
 )
 

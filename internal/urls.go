@@ -6,7 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/restsend/gormpher"
-	"github.com/restsend/rabbit"
+	"github.com/szluyu99/rabbit"
 	"gorm.io/gorm"
 )
 
@@ -28,14 +28,29 @@ func (m *ServerManager) RegisterHandler(r *gin.Engine) error {
 		m.categoryObject(),
 		m.articleObject(),
 		{
+			Name:      "permission",
 			Model:     &rabbit.Permission{},
 			GetDB:     m.getDB,
 			Editables: []string{"Name", "Code"},
 		},
 		{
+			Name:      "group",
 			Model:     &rabbit.Group{},
 			GetDB:     m.getDB,
 			Editables: []string{"Name"},
+		},
+		{
+			Name:        "role",
+			Model:       &rabbit.Role{},
+			GetDB:       m.getDB,
+			Editables:   []string{"Name", "Label"},
+			Searchables: []string{"Name", "Label"},
+		},
+		{
+			Name:        "user",
+			Model:       &rabbit.User{},
+			GetDB:       m.getDB,
+			Searchables: []string{"Email", "Phone", "FirstName", "LastName", "DisplayName"},
 		},
 	}
 

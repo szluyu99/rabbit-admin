@@ -19,11 +19,11 @@ const {
   handleShowEdit, handleEdit,
   handleDelete, handleBatch,
 } = useTable({
-  queryFn: params => request.post('/api/role', params),
-  addFn: item => request.put('/api/role', item),
-  deleteFn: id => request.delete(`/api/role/${id}`),
-  editFn: item => request.patch(`/api/role/${item.id}`, item),
-  batchFn: ids => request.delete('/api/role', ids),
+  queryFn: params => request.post('/api/category', params),
+  addFn: item => request.put('/api/category', item),
+  deleteFn: id => request.delete(`/api/category/${id}`),
+  editFn: item => request.patch(`/api/category/${item.id}`, item),
+  batchFn: ids => request.delete('/api/category', ids),
 })
 
 const bulkActions = [
@@ -39,7 +39,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <PageCard title="Role Page">
+  <PageCard title="Category Page">
     <div class="flex justify-between items-center">
       <div class="w-64 sm:w-xs">
         <Input
@@ -67,23 +67,17 @@ onMounted(() => {
           <th scope="col" class="py-3.5 px-3 col-span-3 text-sm font-semibold text-gray-900 sm:pl-6">
             Name
           </th>
-          <th scope="col" class="py-3.5 px-3 col-span-3 text-sm font-semibold text-gray-900 sm:pl-6">
-            Label
-          </th>
           <th scope="col" class="px-4 py-3.5 col-span-3 text-sm font-semibold text-gray-900" />
         </template>
         <template #rows="{ row }">
-          <td class="w-16 whitespace-nowrap px-3.5 py-2 pl-4 sm:pl-6 text-sm text-gray-500">
+          <td class="whitespace-nowrap px-3.5 py-2 pl-4 sm:pl-6 text-sm text-gray-500">
             {{ formatDate(row.createdAt) }}
           </td>
-          <td class="w-16 whitespace-nowrap px-3.5 py-2 pl-4 sm:pl-6 text-sm text-gray-500">
+          <td class="whitespace-nowrap px-3.5 py-2 pl-4 sm:pl-6 text-sm text-gray-500">
             {{ formatDate(row.updatedAt) }}
           </td>
           <td class="whitespace-nowrap px-3.5 py-2 pl-4 sm:pl-6 text-sm text-gray-500">
             {{ row.name }}
-          </td>
-          <td class="whitespace-nowrap px-3.5 py-2 pl-4 sm:pl-6 text-sm text-gray-500">
-            {{ row.label }}
           </td>
           <td class="w-32 whitespace-nowrap px-3.5 py-2 text-lg text-gray-500 group">
             <div class="flex items-center gap-2 lg:px-4">
@@ -109,11 +103,10 @@ onMounted(() => {
   </PageCard>
   <Modal v-model="modalVisible">
     <div class="text-lg font-bold mb-5">
-      {{ form.id ? 'Edit Role' : 'Add Role' }}
+      {{ form.id ? 'Edit Category' : 'Add Category' }}
     </div>
     <div class="space-y-3">
       <Input v-model="form.name" label="Name" />
-      <Input v-model="form.label" label="Label" />
     </div>
     <div class="mt-5 sm:gap-3 sm:mt-4 sm:flex sm:flex-row-reverse">
       <Button v-if="form.id" type="success" @click="handleEdit(form)">

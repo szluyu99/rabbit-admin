@@ -7,6 +7,7 @@ import (
 
 func (m *ServerManager) tagObject() gormpher.WebObject {
 	return gormpher.WebObject{
+		Name:        "tag",
 		Model:       &models.Tag{},
 		GetDB:       m.getDB,
 		Editables:   []string{"Name"},

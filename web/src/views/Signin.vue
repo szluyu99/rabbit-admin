@@ -1,20 +1,27 @@
 <script setup lang="ts">
 import { reactive } from 'vue'
 import { useRouter } from 'vue-router'
+
+import { useUserStore } from '@/store'
+import { setToken } from '@/utils/token'
 import api from '@/api'
 
+const userStore = useUserStore()
 const router = useRouter()
 
 const loginForm = reactive({
   email: '',
   password: '',
+  remember: false,
 })
 
 async function doSignin(e: Event) {
   e.preventDefault()
 
   try {
-    await api.login(loginForm)
+    const result = await api.login(loginForm)
+    userStore.signin(result)
+    setToken(result.token)
     router.push('/')
   }
   catch (e) {
@@ -70,7 +77,11 @@ async function doSignin(e: Event) {
 
           <div class="flex items-center justify-between">
             <div class="flex items-center">
-              <input id="remember-me" name="remember-me" type="checkbox" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600">
+              <input
+                id="remember-me"
+                v-model="loginForm.remember" name="remember-me" type="checkbox"
+                class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
+              >
               <label for="remember-me" class="ml-2 block text-sm text-gray-900">
                 Remember me
               </label>

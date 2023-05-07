@@ -1,88 +1,104 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
-import {
-  Dialog,
-  DialogPanel,
-  DialogTitle,
-  TransitionChild,
-  TransitionRoot,
-} from '@headlessui/vue'
-
-import { XMarkIcon } from '@heroicons/vue/24/outline'
+import { computed } from 'vue'
+// import { useDOMScrollLock } from '@/composables/useDOMScrollLock'
 
 interface Props {
-  show: boolean
-  showClose?: boolean
-  width?: string
+  modelValue: boolean
+  dismissible?: boolean
+  dismissButton?: boolean
+  size?: 'base' | 'md' | 'lg' | 'xl' | 'full'
+  padded?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  showClose: true,
-  width: 'w-xl',
+  dismissible: true,
+  dismissButton: true,
+  padded: true,
+  size: 'base',
 })
 
-const emits = defineEmits(['update:show'])
+const emits = defineEmits<{
+  (e: 'update:modelValue', value: boolean): void
+  (e: 'close'): void
+}>()
 
-const open = ref(props.show)
-watch(() => props.show, val => open.value = val)
+const isOpen = computed({
+  get: () => props.modelValue,
+  set: val => emits('update:modelValue', val),
+})
 
-function closeModal() {
-  open.value = false
-  emits('update:show', open.value)
+function close() {
+  if (props.dismissible)
+    isOpen.value = false
+  emits('close')
 }
+
+// Lock DOM scroll when modelValue is `true`
+// !️ We need to use type assertion here because of this issue: https://github.com/johnsoncodehk/volar/issues/2219
+// useDOMScrollLock(toRef(props, 'modelValue') as Ref<boolean>)
 </script>
 
 <template>
-  <TransitionRoot appear :show="open" as="template">
-    <Dialog as="div" class="relative z-10" @close="closeModal">
-      <TransitionChild
-        as="template"
-        enter="duration-300 ease-out" enter-from="opacity-0" enter-to="opacity-100"
-        leave="duration-200 ease-in" leave-from="opacity-100" leave-to="opacity-0"
-      >
-        <div class="fixed inset-0 bg-black bg-opacity-25" />
-      </TransitionChild>
+  <Teleport to="body">
+    <div
+      class="fixed z-30 inset-0 overflow-y-auto transition-all ease-in"
+      :class="[
+        isOpen ? 'visible' : 'invisible ease-in duration-100',
+      ]"
+    >
+      <!-- overlay -->
+      <div
+        class="fixed inset-0 bg-gray-500 dark:bg-gray-600 transition-opacity"
+        :class="[
+          isOpen ? 'ease-out duration-200 opacity-75' : 'ease-in duration-100 opacity-0',
+        ]"
+        @click.self="close"
+      />
 
-      <div class="fixed inset-0 overflow-y-auto">
-        <div class="flex min-h-full items-center justify-center p-4 text-center ">
-          <TransitionChild
-            as="template"
-            enter="ease-out duration-300" enter-from="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" enter-to="opacity-100 translate-y-0 sm:scale-100"
-            leave="ease-in duration-200" leave-from="opacity-100 translate-y-0 sm:scale-100" leave-to="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+      <div class="flex items-center justify-center min-h-full p-2 sm:p-6">
+        <div
+          class="relative inline-block bg-white dark:bg-gray-900 rounded-lg shadow-xl transform transition-all"
+          :class="[
+            {
+              'w-full sm:max-w-lg': size === 'base',
+              'w-full sm:max-w-xl': size === 'md',
+              'w-full sm:max-w-3xl': size === 'lg',
+              'w-full sm:max-w-5xl': size === 'xl',
+              'w-full': size === 'full',
+              'p-4 sm:p-6': padded,
+            },
+            isOpen
+              ? 'duration-500 opacity-100 translate-y-0 sm:scale-100'
+              : 'duration-300 opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95',
+          ]"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="modal-headline"
+        >
+          <button
+            v-if="dismissButton"
+            class="absolute top-4 right-4 h-6 w-6 p-1 rounded-full bg-gray-100 text-gray-700
+            hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500
+          dark:text-gray-300 dark:bg-gray-800 dark:hover:bg-gray-700"
+            aria-label="close"
+            @click="close"
           >
-            <DialogPanel
-              class="relative px-4 pt-5 pb-4 transform overflow-hidden
-              rounded-lg bg-white text-left shadow-xl transition-all
-              sm:my-8 sm:p-6"
-              :class="width"
-            >
-              <div v-if="showClose" class="absolute top-0 right-0 hidden pt-4 pr-4 sm:block">
-                <button
-                  type="button"
-                  class="rounded-md bg-white text-gray-400
-                  hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                  @click="closeModal"
-                >
-                  <span class="sr-only">Close</span>
-                  <XMarkIcon class="h-6 w-6" aria-hidden="true" />
-                </button>
-              </div>
-
-              <template v-if="$slots?.header">
-                <DialogTitle as="h3" class="mb-5 text-base font-semibold leading-6 text-gray-900">
-                  <slot name="header" />
-                </DialogTitle>
-              </template>
-              <slot />
-              <template v-if="$slots?.footer">
-                <!-- <div class="mt-5 sm:mt-6 sm:grid sm:grid-flow-row-dense sm:grid-cols-2 sm:gap-3"> -->
-                <slot name="footer" />
-                <!-- </div> -->
-              </template>
-            </DialogPanel>
-          </TransitionChild>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+          <slot />
         </div>
       </div>
-    </Dialog>
-  </TransitionRoot>
+    </div>
+  </Teleport>
 </template>
+
+<style lang="scss">
+html.scroll-lock {
+  position: fixed;
+  overflow-y: scroll;
+  top: var(--window-scroll-top);
+  width: 100%;
+}
+</style>

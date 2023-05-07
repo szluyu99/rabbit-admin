@@ -3,7 +3,7 @@ package models
 import (
 	"time"
 
-	"github.com/restsend/rabbit"
+	"github.com/szluyu99/rabbit"
 )
 
 type Tag struct {
