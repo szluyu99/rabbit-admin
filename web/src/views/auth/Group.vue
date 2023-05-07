@@ -9,7 +9,7 @@ import Pagination from '@/components/Pagination.vue'
 import PageCard from '@/components/PageCard.vue'
 
 import useTable from '@/composables/useTable'
-import { formatDate } from '@/helper'
+import { formatDate } from '@/utils/helper'
 import request from '@/api/request'
 
 const {

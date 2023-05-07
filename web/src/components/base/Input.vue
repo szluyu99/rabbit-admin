@@ -42,34 +42,40 @@ const flux = reactive({
 })
 </script>
 
+<script lang="ts">
+export default {
+  inheritAttrs: false,
+}
+</script>
+
 <template>
-  <div class="flex flex-col w-full relative" :class="[disabled && 'opacity-60']">
-    <label class="text-sm font-bold mb-2 empty:hidden">
+  <div class="relative w-full flex flex-col" :class="[disabled && 'opacity-60']">
+    <label class="mb-2 text-sm font-bold empty:hidden">
       <template v-if="label">{{ label }}</template>
       <slot v-else />
       <span v-if="required" class="text-error-500">*</span>
     </label>
 
-    <div class="flex w-full items-center">
+    <div class="w-full flex items-center">
       <div
         v-if="preIcon"
-        class="p-2 border border-slate-400 border-r-0 rounded rounded-r-none bg-white dark:bg-slate-800 z-1"
+        class="z-1 border border-r-0 border-slate-400 rounded rounded-r-none bg-white p-2 dark:bg-slate-800"
         :class="{
           'important:border-red-500 important:ring-red-500 mb-1': errorMessage,
         }"
         @click.stop="emit('prepend')"
       >
-        <div :class="preIcon" class="w-5 h-5" />
+        <div :class="preIcon" class="h-5 w-5" />
       </div>
       <span
         v-if="$slots.prepend && !preIcon"
-        class="inline-flex items-center rounded-l-md border border-r-0 border-gray-300 px-3 py-2 text-gray-500 sm:text-sm"
+        class="inline-flex items-center border border-r-0 border-gray-300 rounded-l-md px-3 py-2 text-gray-500 sm:text-sm"
       >
         <slot name="prepend" />
       </span>
-      <!-- TODO: v-bind="$attrs" -->
       <input
         v-model="inputValue"
+        v-bind="$attrs"
         :type="type"
         :disabled="disabled"
         :placeholder="placeholder"
@@ -84,23 +90,23 @@ const flux = reactive({
       >
       <div
         v-if="suffIcon"
-        class="p-2 border border-slate-400 border-l-0 rounded rounded-l-none bg-white dark:bg-slate-800 z-1;"
+        class="z-1; border border-l-0 border-slate-400 rounded rounded-l-none bg-white p-2 dark:bg-slate-800"
         :class="{
           'important:border-red-500 important:ring-red-500 mb-1': errorMessage,
         }"
         @click.stop="emit('append')"
       >
-        <div :class="suffIcon" class="w-5 h-5" />
+        <div :class="suffIcon" class="h-5 w-5" />
       </div>
       <span
         v-if="$slots.append && !suffIcon"
-        class="inline-flex items-center rounded-r-md border border-l-0 border-gray-300 px-3 py-2 text-gray-500 sm:text-sm"
+        class="inline-flex items-center border border-l-0 border-gray-300 rounded-r-md px-3 py-2 text-gray-500 sm:text-sm"
       >
         <slot name="append" />
       </span>
     </div>
 
-    <div v-if="errorMessage" class="text-error-500 text-xs">
+    <div v-if="errorMessage" class="text-xs text-error-500">
       {{ errorMessage }}
     </div>
   </div>

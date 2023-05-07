@@ -23,26 +23,24 @@ const indeterminate = computed(() => {
 </script>
 
 <template>
-  <div class="flex flex-col w-full">
-    <div class="-my-2 -mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8">
-      <div class="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8">
+  <div class="w-full flex flex-col">
+    <div class="overflow-x-auto -mx-4 -my-2 lg:-mx-8 sm:-mx-6">
+      <div class="inline-block min-w-full py-2 align-middle lg:px-8 md:px-6">
         <div class="relative overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
           <!-- Head Bulk Actions  -->
           <div
             v-if="selectIds.length > 0"
-            class="absolute z-10 top-0 left-12 h-12 flex items-center space-x-3 bg-gray-50 sm:left-16"
+            class="absolute left-12 top-0 z-10 h-12 flex items-center bg-gray-50 sm:left-16 space-x-3"
           >
             <button
               v-for="action in actions" :key="action.name" :disabled="!selectIds.length"
-              class="inline-flex items-center px-2.5 py-1.5 text-xs font-medium text-gray-700
-                rounded border bg-white border-gray-300 shadow-sm hover:bg-gray-50
-                focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
+              class="inline-flex items-center border border-gray-300 rounded bg-white px-2.5 py-1.5 text-xs font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
               @click="action.clicked(selectIds)"
             >
               {{ action.name }}
             </button>
           </div>
-          <table class="min-w-full table-fixed divide-y divide-gray-300 overflow-x-auto">
+          <table class="min-w-full table-fixed overflow-x-auto divide-y divide-gray-300">
             <thead class="bg-gray-50">
               <tr>
                 <!-- Selection box for the header -->
@@ -57,10 +55,10 @@ const indeterminate = computed(() => {
                 <slot name="headers" />
               </tr>
             </thead>
-            <tbody class="divide-y divide-gray-200 bg-white overflow-x-auto">
+            <tbody class="overflow-x-auto bg-white divide-y divide-gray-200">
               <tr v-if="loading">
                 <td :colspan="99">
-                  <div class="w-full flex items-center justify-center opacity-90 h-32">
+                  <div class="h-32 w-full flex items-center justify-center opacity-90">
                     <template v-if="$slots.loading">
                       <slot name="loading" />
                     </template>
@@ -72,12 +70,12 @@ const indeterminate = computed(() => {
               </tr>
               <tr v-else-if="data.length === 0">
                 <td :colspan="99">
-                  <div class="flex items-center justify-center min-h-32">
+                  <div class="min-h-32 flex items-center justify-center">
                     <template v-if="$slots.empty">
                       <slot name="empty" />
                     </template>
                     <template v-else>
-                      <div class="i-simple-icons:protodotio text-5xl text-gray-400 select-none" />
+                      <div class="i-simple-icons:protodotio select-none text-5xl text-gray-400" />
                     </template>
                   </div>
                 </td>
@@ -85,7 +83,7 @@ const indeterminate = computed(() => {
               <template v-else>
                 <tr
                   v-for="(item, idx) in data" :key="item.id"
-                  class="group hover:bg-gray-50 duration-300"
+                  class="group duration-300 hover:bg-gray-50"
                   :class="[selectIds.includes(item.id) && 'bg-gray-50']"
                 >
                   <!-- Selection box for the body -->

@@ -30,7 +30,7 @@ type Article struct {
 	Title       string `json:"title" gorm:"type:varchar(100);not null"`
 	Desc        string `json:"desc" gorm:"type:varchar(200)"`
 	Content     string `json:"content"`
-	Img         string `json:"img" gorm:"type:varchar(100)"`
+	Cover       string `json:"cover" gorm:"type:varchar(100)"`
 	Type        string `json:"type" gorm:"type:varchar(20)"`   // original | reprint | translate
 	Status      string `json:"status" gorm:"type:varchar(20)"` // public | private
 	IsTop       bool   `json:"is_top"`

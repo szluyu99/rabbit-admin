@@ -17,6 +17,7 @@ const routes: Array<RouteRecordRaw> = [
         path: '/article',
         redirect: '/article/list',
         children: [
+          { path: 'write', component: () => import('@/views/article/Write.vue') },
           { path: 'list', component: () => import('@/views/article/ArticleList.vue') },
           { path: 'category', component: () => import('@/views/article/Category.vue') },
           { path: 'tag', component: () => import('@/views/article/Tag.vue') },
