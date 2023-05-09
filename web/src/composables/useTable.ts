@@ -32,7 +32,7 @@ interface EditItem {
 }
 
 export interface QueryParams {
-  pos?: number
+  page?: number
   limit?: number
   keyword?: string
   filters?: Array<Filter>
@@ -40,7 +40,7 @@ export interface QueryParams {
 }
 
 interface QueryResult {
-  pos?: number
+  page?: number
   limit?: number
   keyword?: string
   total: number
@@ -59,13 +59,13 @@ export default function useTable({
   // table
   const selectedIds = ref<number[] | string[]>([])
   const loading = ref(false)
-  const form = ref<any>({})
+  const form = ref<any>({ ...initForm })
   const modalVisible = ref(false)
   const modalLoading = ref(false)
 
   // queryParams
-  const pos = ref(0)
-  const limit = ref(5)
+  const page = ref(1)
+  const limit = ref(10)
   const keyword = ref('')
   const queryParams = reactive(extraParams)
 
@@ -91,7 +91,7 @@ export default function useTable({
     loading.value = true
     try {
       const resp = await queryFn({
-        pos: pos.value,
+        page: page.value,
         limit: limit.value,
         keyword: keyword.value,
         filters: filters.value,
@@ -102,9 +102,9 @@ export default function useTable({
       list.value = resp.items ?? []
 
       // Empty data found and not on the first page
-      if (list.value.length === 0 && pos.value !== 0) {
-        pos.value -= limit.value
-        handleQuery()
+      if (list.value.length === 0 && page.value !== 1) {
+        page.value -= 1
+        await handleQuery()
       }
     }
     catch (err: any) {
@@ -117,7 +117,7 @@ export default function useTable({
   }
 
   function handleSearch(): void {
-    pos.value = 0
+    page.value = 1
     handleQuery()
   }
 
@@ -209,7 +209,7 @@ export default function useTable({
   }
 
   function handleReset() {
-    pos.value = 0
+    page.value = 1
     limit.value = 10
     keyword.value = ''
     filters.value = []
@@ -219,7 +219,7 @@ export default function useTable({
   }
 
   return {
-    pos,
+    page,
     limit,
     keyword,
     filters,

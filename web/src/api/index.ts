@@ -6,4 +6,7 @@ export default {
   logout: () => request.get('/auth/logout'),
   register: (data: any) => request.post('/auth/register', data),
   userInfo: () => request.get('/auth/info'), // do auth check
+
+  tagOptions: () => request.get('/api/tag/all'),
+  categoryOptions: () => request.get('/api/category/all'),
 }

@@ -13,7 +13,7 @@ import request from '@/api/request'
 import { formatDate } from '@/utils/helper'
 
 const {
-  list, keyword, loading, modalVisible, form, pos, limit, total,
+  list, keyword, loading, modalVisible, form, page, limit, total,
   handleQuery, handleSearch,
   handleShowAdd, handleAdd,
   handleShowEdit, handleEdit,
@@ -59,49 +59,25 @@ onMounted(() => {
       <Table :data="list" :loading="loading" :actions="bulkActions">
         <template #headers>
           <th scope="col" class="col-span-3 px-3 py-3.5 text-sm font-semibold text-gray-900 sm:pl-6">
-            Cover
-          </th>
-          <th scope="col" class="col-span-3 px-3 py-3.5 text-sm font-semibold text-gray-900 sm:pl-6">
-            Title
-          </th>
-          <th scope="col" class="col-span-3 px-3 py-3.5 text-sm font-semibold text-gray-900 sm:pl-6">
-            Category
-          </th>
-          <th scope="col" class="col-span-3 px-3 py-3.5 text-sm font-semibold text-gray-900 sm:pl-6">
-            Tags
-          </th>
-          <th scope="col" class="col-span-3 px-3 py-3.5 text-sm font-semibold text-gray-900 sm:pl-6">
-            Type
+            CreatedAt
           </th>
           <th scope="col" class="col-span-3 px-3 py-3.5 text-sm font-semibold text-gray-900 sm:pl-6">
             UpdatedAt
           </th>
           <th scope="col" class="col-span-3 px-3 py-3.5 text-sm font-semibold text-gray-900 sm:pl-6">
-            IsTop
+            Name
           </th>
           <th scope="col" class="col-span-3 px-4 py-3.5 text-sm font-semibold text-gray-900" />
         </template>
         <template #rows="{ row }">
           <td class="whitespace-nowrap px-3.5 py-2 pl-4 text-sm text-gray-500 sm:pl-6">
-            {{ row.cover }}
+            {{ formatDate(row.createdAt) }}
           </td>
           <td class="whitespace-nowrap px-3.5 py-2 pl-4 text-sm text-gray-500 sm:pl-6">
-            {{ row.title }}
+            {{ formatDate(row.updatedAt) }}
           </td>
           <td class="whitespace-nowrap px-3.5 py-2 pl-4 text-sm text-gray-500 sm:pl-6">
-            {{ row.category }}
-          </td>
-          <td class="whitespace-nowrap px-3.5 py-2 pl-4 text-sm text-gray-500 sm:pl-6">
-            {{ row.tags }}
-          </td>
-          <td class="whitespace-nowrap px-3.5 py-2 pl-4 text-sm text-gray-500 sm:pl-6">
-            {{ row.type }}
-          </td>
-          <td class="whitespace-nowrap px-3.5 py-2 pl-4 text-sm text-gray-500 sm:pl-6">
-            {{ formatDate(row.updated_at) }}
-          </td>
-          <td class="whitespace-nowrap px-3.5 py-2 pl-4 text-sm text-gray-500 sm:pl-6">
-            {{ row.is_top }}
+            {{ row.name }}
           </td>
           <td class="w-32 whitespace-nowrap px-3.5 py-2 text-lg text-gray-500">
             <div class="flex items-center gap-2 lg:px-4">
@@ -119,7 +95,7 @@ onMounted(() => {
       </Table>
     </div>
     <Pagination
-      v-model:pos="pos"
+      v-model:page="page"
       v-model:limit="limit"
       :total="total"
       @query="handleQuery"

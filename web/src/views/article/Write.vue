@@ -1,94 +1,172 @@
 <script setup>
+import { computed, onMounted, ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import { marked } from 'marked'
-import { computed, ref } from 'vue'
+import { debounce } from 'lodash-es'
 
 import Input from '@/components/base/Input.vue'
 import Button from '@/components/base/Button.vue'
+import Select from '@/components/base/Select.vue'
+import Switch from '@/components/base/Switch.vue'
+import Radio from '@/components/base/Radio.vue'
+import Modal from '@/components/base/Modal.vue'
+import DynamicTags from '@/components/base/DynamicTags.vue'
 
 import useTable from '@/composables/useTable'
 import request from '@/api/request'
+import api from '@/api'
 
-const render = new marked.Renderer()
-marked.setOptions({
-  renderer: render,
-  gfm: true,
-  breaks: true,
-  pedantic: false,
-  sanitize: false,
-  smartLists: true,
-  smartypants: false,
-})
+const router = useRouter()
+const route = useRoute()
 
 const {
-  handleAdd,
+  modalVisible, form,
+  handleShowAdd, handleShowEdit,
 } = useTable({
-  addFn: item => request.put('/api/article', item),
+  initForm: {
+    title: '',
+    content: '',
+    category_id: 0,
+    tag_id: 0,
+    type: '',
+    status: '',
+    is_top: false,
+    tag_names: [],
+  },
 })
 
-const input = ref(`
-Marked - Markdown Parser
-========================
+const articleId = ref('')
+const title = ref('')
+const content = ref('# Hello')
+const output = computed(() => marked(content.value))
+const updateContent = debounce(e => content.value = e.target.value, 100)
 
-[Marked] lets you convert [Markdown] into HTML.  Markdown is a simple text format whose goal is to be very easy to read and write, even when not converted to HTML.  This demo page will let you type anything you like and see how it gets converted.  Live.  No more waiting around.
+function handlePublish() {
+  articleId.value ? handleShowEdit(form.value) : handleShowAdd()
+}
 
-How To Use The Demo
--------------------
+async function handleSaveOrUpdate() {
+  form.value.title = title.value
+  form.value.content = content.value
 
-1. Type in stuff on the left.
-2. See the live updates on the right.
+  try {
+    await request.post('/api/article/saveOrUpdate', form.value)
+    router.push('/article/list')
+  }
+  catch (e) {
+    console.error(e)
+  }
+}
 
-That's it.  Pretty simple.  There's also a drop-down option above to switch between various views:
+// const tagOptions = ref([])
+const categoryOptions = ref([])
 
-- **Preview:**  A live display of the generated HTML as it would render in a browser.
-- **HTML Source:**  The generated HTML before your browser makes it pretty.
-- **Lexer Data:**  What [marked] uses internally, in case you like gory stuff like this.
-- **Quick Reference:**  A brief run-down of how to format things using markdown.
+onMounted(() => {
+  articleId.value = route.params.articleId
 
-Why Markdown?
--------------
+  if (articleId.value) {
+    request.get(`/api/article/${articleId.value}`).then((res) => {
+      title.value = res.title
+      content.value = res.content
+      form.value = res
+      form.value.tag_names = res.tags.map(e => e.name)
+    })
+  }
 
-It's easy.  It's not overly bloated, unlike HTML.  Also, as the creator of [markdown] says,
+  api.categoryOptions().then((res) => {
+    categoryOptions.value = (res.items || []).map(e => ({
+      label: e.name,
+      value: e.id,
+    }))
+  })
+  // api.tagOptions().then((res) => {
+  //   tagOptions.value = (res.items || []).map(e => ({
+  //     label: e.name,
+  //     value: e.id,
+  //   }))
+  // })
+})
 
-> The overriding design goal for Markdown's
-> formatting syntax is to make it as readable
-> as possible. The idea is that a
-> Markdown-formatted document should be
-> publishable as-is, as plain text, without
-> looking like it's been marked up with tags
-> or formatting instructions.
-
-Ready to start writing?  Either start changing stuff on the left or
-[clear everything](/demo/?text=) with a simple click.
-
-[Marked]: https://github.com/markedjs/marked/
-[Markdown]: http://daringfireball.net/projects/markdown/`)
-const output = computed(() => marked(input.value))
-
-// const update = debounce((e) => {
-//   input.value = e.target.value
-// }, 100)
+const typeOptions = [
+  { label: 'original', value: 'original' },
+  { label: 'reprint', value: 'reprint' },
+  { label: 'translation', value: 'translation' },
+]
 </script>
 
 <template>
-  <div class="max-w-6xl rounded bg-white p-5 shadow space-y-4">
+  <div class="max-w-7xl rounded bg-white p-5 shadow space-y-4">
     <div class="flex items-center justify-between gap-4">
-      <Input placeholder="Article title" />
+      <Input v-model="title" placeholder="Article title" />
       <Button type="warning">
         Save Draft
       </Button>
-      <Button type="success">
+      <Button type="success" @click="handlePublish">
         Publish
       </Button>
     </div>
     <div class="h-4xl flex overflow-y-auto">
       <textarea
         class="box-border w-full resize-none overflow-scroll border-0 border-r-1 border-solid bg-gray-50 p-2 outline-none sm:w-1/2"
-        :value="input"
-        @input="input = $event.target.value"
+        :value="content"
+        @input="updateContent"
       />
-      <article class="prose prose-truegray box-border hidden w-1/2 overflow-scroll p-2 px-5 sm:block xl:text-xl">
+      <article class="box-border hidden w-1/2 overflow-scroll p-2 px-5 prose prose-truegray sm:block xl:text-xl">
         <div class="text-base" v-html="output" />
       </article>
     </div>
   </div>
+  <Modal v-model="modalVisible">
+    <p class="mb-5 text-xl font-bold">
+      Publish article
+    </p>
+    <Select
+      v-model="form.category_id"
+      label="Category"
+      :options="categoryOptions"
+    />
+    <div class="my-3 space-y-2">
+      <div class="text-sm font-medium leading-6 text-gray-900">
+        Article Tags
+      </div>
+      <div class="h-5">
+        <DynamicTags v-model="form.tag_names" :max="3" />
+      </div>
+    </div>
+    <Select
+      v-model="form.type"
+      label="Article Type"
+      :options="typeOptions"
+    />
+    <div class="space-y-2">
+      <span class="text-sm font-medium leading-6 text-gray-900">
+        Article Cover
+      </span>
+      <Input v-model="form.cover" />
+    </div>
+    <div class="my-3 flex gap-4">
+      <Switch v-model="form.is_top">
+        Is Top
+      </Switch>
+    </div>
+    <div class="flex items-center gap-4 space-x-2">
+      <span class="text-sm font-medium leading-6 text-gray-900">
+        Article Status
+      </span>
+      <Radio v-model="form.status" value="public">
+        Public
+      </Radio>
+      <Radio v-model="form.status" value="private">
+        Private
+      </Radio>
+    </div>
+    <div class="flex flex-row justify-end gap-2">
+      <Button @click="modalVisible = false">
+        Cancel
+      </Button>
+      <Button type="primary" @click="handleSaveOrUpdate">
+        Save
+      </Button>
+    </div>
+  </Modal>
 </template>

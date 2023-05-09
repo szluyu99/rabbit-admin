@@ -5,7 +5,6 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/restsend/gormpher"
 	"github.com/szluyu99/rabbit"
 	"gorm.io/gorm"
 )
@@ -21,9 +20,11 @@ func (m *ServerManager) RegisterHandler(r *gin.Engine) error {
 
 	ar := r.Group("/api") // .Use(m.HandleAuth)
 
-	ar.POST("/article/list", m.handlerArticleList)
+	ar.GET("/article/:id", m.handleGetArticle)
+	ar.POST("/article", m.handleArticleList)
+	ar.POST("/article/saveOrUpdate", m.handleSaveOrUpdateArticle)
 
-	objects := []gormpher.WebObject{
+	objects := []rabbit.WebObject{
 		m.tagObject(),
 		m.categoryObject(),
 		m.articleObject(),
@@ -54,8 +55,8 @@ func (m *ServerManager) RegisterHandler(r *gin.Engine) error {
 		},
 	}
 
-	gormpher.RegisterObjects(ar, objects)
-	// gormpher.RegisterObjectsWithAdmin(r.Group("/admin"), objects)
+	rabbit.RegisterObjects(ar, objects)
+	// rabbit.RegisterObjectsWithAdmin(r.Group("/admin"), objects)
 
 	return nil
 }

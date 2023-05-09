@@ -41,23 +41,23 @@ function close() {
 <template>
   <Teleport to="body">
     <div
-      class="fixed z-30 inset-0 overflow-y-auto transition-all ease-in"
+      class="fixed inset-0 z-30 overflow-y-auto transition-all ease-in"
       :class="[
         isOpen ? 'visible' : 'invisible ease-in duration-100',
       ]"
     >
       <!-- overlay -->
       <div
-        class="fixed inset-0 bg-gray-500 dark:bg-gray-600 transition-opacity"
+        class="fixed inset-0 bg-gray-500 transition-opacity dark:bg-gray-600"
         :class="[
           isOpen ? 'ease-out duration-200 opacity-75' : 'ease-in duration-100 opacity-0',
         ]"
         @click.self="close"
       />
 
-      <div class="flex items-center justify-center min-h-full p-2 sm:p-6">
+      <div class="min-h-full flex items-center justify-center p-2 sm:p-6">
         <div
-          class="relative inline-block bg-white dark:bg-gray-900 rounded-lg shadow-xl transform transition-all"
+          class="relative inline-block transform rounded-lg bg-white shadow-xl transition-all dark:bg-gray-900"
           :class="[
             {
               'w-full sm:max-w-lg': size === 'base',
@@ -77,9 +77,7 @@ function close() {
         >
           <button
             v-if="dismissButton"
-            class="absolute top-4 right-4 h-6 w-6 p-1 rounded-full bg-gray-100 text-gray-700
-            hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500
-          dark:text-gray-300 dark:bg-gray-800 dark:hover:bg-gray-700"
+            class="absolute right-4 top-4 h-6 w-6 rounded-full bg-gray-100 p-1 text-gray-700 dark:bg-gray-800 hover:bg-gray-200 dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 dark:hover:bg-gray-700"
             aria-label="close"
             @click="close"
           >

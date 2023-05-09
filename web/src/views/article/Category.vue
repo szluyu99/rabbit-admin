@@ -13,7 +13,7 @@ import request from '@/api/request'
 import { formatDate } from '@/utils/helper'
 
 const {
-  list, keyword, loading, modalVisible, form, pos, limit, total,
+  list, keyword, loading, modalVisible, form, page, limit, total,
   handleQuery, handleSearch,
   handleShowAdd, handleAdd,
   handleShowEdit, handleEdit,
@@ -95,7 +95,7 @@ onMounted(() => {
       </Table>
     </div>
     <Pagination
-      v-model:pos="pos"
+      v-model:page="page"
       v-model:limit="limit"
       :total="total"
       @query="handleQuery"

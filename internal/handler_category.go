@@ -1,12 +1,16 @@
 package rabbitadmin
 
 import (
-	"github.com/restsend/gormpher"
+	"net/http"
+
+	"github.com/gin-gonic/gin"
+	"github.com/szluyu99/rabbit"
 	"github.com/szluyu99/rabbit-admin/internal/models"
+	"gorm.io/gorm"
 )
 
-func (m *ServerManager) categoryObject() gormpher.WebObject {
-	return gormpher.WebObject{
+func (m *ServerManager) categoryObject() rabbit.WebObject {
+	return rabbit.WebObject{
 		Name:        "category",
 		Model:       &models.Category{},
 		GetDB:       m.getDB,
@@ -14,5 +18,14 @@ func (m *ServerManager) categoryObject() gormpher.WebObject {
 		Searchables: []string{"Name"},
 		Filterables: []string{"Name"},
 		Orderables:  []string{"CreatedAt"},
+		Views: []rabbit.QueryView{
+			{
+				Name:   "all",
+				Method: http.MethodGet,
+				Prepare: func(db *gorm.DB, c *gin.Context) (*gorm.DB, *rabbit.QueryForm, error) {
+					return db, &rabbit.QueryForm{Page: 1, Limit: -1}, nil
+				},
+			},
+		},
 	}
 }

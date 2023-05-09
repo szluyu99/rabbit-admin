@@ -23,3 +23,26 @@ type PageResult[T any] struct {
 	TotalCount int    `json:"total,omitempty"`
 	Items      []T    `json:"items"`
 }
+
+type ArticleQueryForm struct {
+	PageForm
+	TagId      int    `json:"tag_id"`
+	CategoryId int    `json:"category_id"`
+	Type       string `json:"type"`
+	Status     string `json:"status"`
+}
+
+type ArticleForm struct {
+	ID          uint     `json:"id"`
+	Title       string   `json:"title"`
+	Desc        string   `json:"desc"`
+	Content     string   `json:"content"`
+	Cover       string   `json:"cover"`
+	Type        string   `json:"type"`   // original | reprint | translate
+	Status      string   `json:"status"` // public | private | draft
+	IsTop       bool     `json:"is_top"`
+	IsDelete    bool     `json:"is_delete"`
+	OriginalUrl string   `json:"original_url"`
+	CategoryId  uint     `json:"category_id"`
+	TagNames    []string `json:"tag_names"`
+}

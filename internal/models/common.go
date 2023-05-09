@@ -13,6 +13,10 @@ type Universal struct {
 }
 
 func MakeMigrate(db *gorm.DB) error {
+	if err := db.SetupJoinTable(&Article{}, "Tags", &ArticleTag{}); err != nil {
+		return err
+	}
+
 	return db.AutoMigrate(
 		&Tag{},
 		&Category{},

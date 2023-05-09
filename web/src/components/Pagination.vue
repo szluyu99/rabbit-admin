@@ -1,39 +1,44 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import Select from '@/components/base/Select.vue'
 
 const props = defineProps({
   total: { type: Number, default: 0 },
-  pos: { type: Number, default: 0 },
+  page: { type: Number, default: 1 },
   limit: { type: Number, default: 10 },
 })
 
-const emit = defineEmits(['query', 'update:pos', 'update:limit'])
+const emit = defineEmits(['query', 'update:page', 'update:limit'])
 
-const pos = ref(props.pos)
+const page = ref(props.page)
 const limit = ref(props.limit)
 
+watch([() => props.page, () => props.limit], ([p, l]) => {
+  page.value = p
+  limit.value = l
+})
+
 function handlePrev() {
-  if (pos.value === 0)
-    return
-  pos.value -= limit.value
-  emit('update:pos', pos.value)
-  emit('query')
+  if (page.value > 1) {
+    page.value -= 1
+    emit('update:page', page.value)
+    emit('query')
+  }
 }
 
 function handleNext() {
-  if (pos.value + limit.value >= props.total)
-    return
-  pos.value += limit.value
-  emit('update:pos', pos.value)
-  emit('query')
+  if (page.value * limit.value < props.total) {
+    page.value += 1
+    emit('update:page', page.value)
+    emit('query')
+  }
 }
 
 function updateLimit() {
-  pos.value = 0
+  page.value = 1
 
   emit('update:limit', limit.value)
-  emit('update:pos', pos.value)
+  emit('update:page', page.value)
   emit('query')
 }
 
@@ -49,15 +54,14 @@ const options = [
 <template>
   <div class="flex items-center justify-between">
     <div class="flex items-center">
-      <span class="font-medium mr-1">Total:</span>
+      <span class="mr-1 font-medium">Total:</span>
       <span class="text-gray-600"> {{ total }}</span>
-      <span class="text-gray-700 ml-4 hidden xs:block"> View </span>
-      <div class="w-20 ml-2 ">
+      <span class="xs:block ml-4 hidden text-gray-700"> View </span>
+      <div class="ml-2 w-20">
         <Select
           v-model="limit"
           :options="options"
           :placeholder="String(limit)"
-          height="py-1.5"
           @change="updateLimit"
         />
       </div>
@@ -66,22 +70,18 @@ const options = [
       class="flex items-center justify-between py-3"
       aria-label="Pagination"
     >
-      <div class="flex flex-1 justify-between space-x-3 sm:justify-end">
+      <div class="flex flex-1 justify-between sm:justify-end space-x-3">
         <button
-          class="relative inline-flex items-center px-2 py-1 text-sm font-medium text-gray-700
-          rounded-md border border-gray-300 bg-white hover:bg-gray-50 p-1 hover:text-gray-500
-          focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+          class="relative inline-flex items-center border border-gray-300 rounded-md bg-white p-1 px-2 py-1 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
           @click="handlePrev"
         >
-          <span class="i-mdi:chevron-left w-5 h-5" />
+          <span class="i-mdi:chevron-left h-5 w-5" />
         </button>
         <button
-          class="relative inline-flex items-center px-2 py-1 text-sm font-medium text-gray-700
-          rounded-md border border-gray-300 bg-white hover:bg-gray-50 p-1 hover:text-gray-500
-          focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+          class="relative inline-flex items-center border border-gray-300 rounded-md bg-white p-1 px-2 py-1 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
           @click="handleNext"
         >
-          <span class="i-mdi:chevron-right w-5 h-5" />
+          <span class="i-mdi:chevron-right h-5 w-5" />
         </button>
       </div>
     </nav>

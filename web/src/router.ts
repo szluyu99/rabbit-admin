@@ -2,6 +2,7 @@ import type { RouteRecordRaw } from 'vue-router'
 import { createRouter, createWebHistory } from 'vue-router'
 
 import api from './api'
+import { getToken } from './utils/token'
 
 const Layout = () => import('@/layout/Layout.vue')
 
@@ -17,7 +18,7 @@ const routes: Array<RouteRecordRaw> = [
         path: '/article',
         redirect: '/article/list',
         children: [
-          { path: 'write', component: () => import('@/views/article/Write.vue') },
+          { path: 'write/:articleId?', component: () => import('@/views/article/Write.vue') },
           { path: 'list', component: () => import('@/views/article/ArticleList.vue') },
           { path: 'category', component: () => import('@/views/article/Category.vue') },
           { path: 'tag', component: () => import('@/views/article/Tag.vue') },
@@ -48,9 +49,11 @@ const router = createRouter({
 
 // login guard
 router.beforeEach(async (to) => {
-  if (to.path === '/signin')
+  if (to.path === '/signin' || to.path === '/signup')
     return true
 
+  // 1. default use session
+  // 2. if session invalid, try to use token
   try {
     await api.userInfo()
     if (to.path === '/signin')
@@ -59,7 +62,16 @@ router.beforeEach(async (to) => {
     return true
   }
   catch {
-    return { path: 'signin' }
+    try {
+      const token = getToken()
+      if (token)
+        await api.login({ token })
+      else
+        return { path: '/signin' }
+    }
+    catch {
+      return { path: '/signin' }
+    }
   }
 })
 

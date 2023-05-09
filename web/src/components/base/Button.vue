@@ -19,10 +19,7 @@ withDefaults(defineProps<Props>(), {
     v-bind="$attrs"
     type="button"
     :disabled="disabled"
-    class="whitespace-nowrap inline-flex w-full items-center justify-center
-    rounded-md shadow-sm text-xs font-sans font-semibold leading-4
-    focus:outline-none focus:ring-2 focus:ring-offset-2
-    disabled:cursor-not-allowed disabled:opacity-30 sm:w-auto"
+    class="w-full inline-flex items-center justify-center whitespace-nowrap rounded-md font-sans text-xs font-semibold leading-4 shadow-sm sm:w-auto disabled:cursor-not-allowed disabled:opacity-30 focus:outline-none focus:ring-2 focus:ring-offset-2"
     :class="custom || [[type], {
       'px-2 py-1': size === 'sm',
       'px-3 py-2.5 sm:py-2': size === 'base',
