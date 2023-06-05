@@ -30,6 +30,7 @@ type ArticleQueryForm struct {
 	CategoryId int    `json:"category_id"`
 	Type       string `json:"type"`
 	Status     string `json:"status"`
+	IsDelete   bool   `json:"is_delete"`
 }
 
 type ArticleForm struct {
@@ -45,4 +46,16 @@ type ArticleForm struct {
 	OriginalUrl string   `json:"original_url"`
 	CategoryId  uint     `json:"category_id"`
 	TagNames    []string `json:"tag_names"`
+}
+
+type RoleForm struct {
+	ID            uint   `json:"id"`
+	Name          string `json:"name"`
+	Label         string `json:"label"`
+	PermissionIds []uint `json:"permission_ids"`
+}
+
+type UserForm struct {
+	ID      uint   `json:"id"`
+	RoleIds []uint `json:"role_ids"`
 }

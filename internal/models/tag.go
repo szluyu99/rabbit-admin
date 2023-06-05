@@ -4,7 +4,6 @@ import (
 	"errors"
 	"time"
 
-	"github.com/szluyu99/rabbit"
 	"gorm.io/gorm"
 )
 
@@ -14,11 +13,11 @@ type ArticleTag struct {
 }
 
 type Tag struct {
-	ID        uint         `json:"id" gorm:"primarykey"`
-	CreatedAt time.Time    `json:"created_at"`
-	UpdatedAt time.Time    `json:"updated_at"`
-	GroupID   uint         `json:"group_id"`
-	Group     rabbit.Group `json:"-"`
+	ID        uint      `json:"id" gorm:"primarykey"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+	// GroupID   uint         `json:"group_id"`
+	// Group     rabbit.Group `json:"-"`
 
 	Name string `json:"name" gorm:"type:varchar(20);not null;uniqueIndex"`
 
@@ -28,12 +27,12 @@ type Tag struct {
 // check if tag is used by article
 func (t *Tag) BeforeDelete(tx *gorm.DB) error {
 	var count int64
-	result := tx.Model(&ArticleTag{}).Where("tag_id = ?", t.ID).Count(&count)
+	result := tx.Model(&ArticleTag{}).Where("tag_id", t.ID).Count(&count)
 	if result.Error != nil {
 		return result.Error
 	}
 	if count > 0 {
-		return errors.New("tag is used by article")
+		return errors.New("the tag is used by article")
 	}
 	return nil
 }

@@ -19,13 +19,17 @@ func (m *ServerManager) categoryObject() rabbit.WebObject {
 		Filterables: []string{"Name"},
 		Orderables:  []string{"CreatedAt"},
 		Views: []rabbit.QueryView{
-			{
-				Name:   "all",
-				Method: http.MethodGet,
-				Prepare: func(db *gorm.DB, c *gin.Context) (*gorm.DB, *rabbit.QueryForm, error) {
-					return db, &rabbit.QueryForm{Page: 1, Limit: -1}, nil
-				},
-			},
+			allCategoryQueryView(),
+		},
+	}
+}
+
+func allCategoryQueryView() rabbit.QueryView {
+	return rabbit.QueryView{
+		Name:   "all",
+		Method: http.MethodGet,
+		Prepare: func(db *gorm.DB, c *gin.Context) (*gorm.DB, *rabbit.QueryForm, error) {
+			return db, &rabbit.QueryForm{Page: 1, Limit: -1}, nil
 		},
 	}
 }

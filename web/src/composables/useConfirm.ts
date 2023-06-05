@@ -1,5 +1,5 @@
 import { createApp } from 'vue'
-import Confirm from '@/components/Confirm.vue'
+import TheConfirm from '@/components/TheConfirm.vue'
 
 export async function useConfirm({
   title = 'Are you sure?',
@@ -11,7 +11,7 @@ export async function useConfirm({
   option = {},
 }) {
   const mountNode = document.createElement('div')
-  const instance = createApp(Confirm, {
+  const instance = createApp(TheConfirm, {
     title,
     content,
     okText,

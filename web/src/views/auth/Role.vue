@@ -1,130 +1,167 @@
 <script setup>
-import { onMounted } from 'vue'
+import { onMounted, ref } from 'vue'
+import { UButton, UInput, UModal, UTable, UTag, UTree } from 'unocss-ui'
 
-import Table from '@/components/base/Table.vue'
-import Input from '@/components/base/Input.vue'
-import Button from '@/components/base/Button.vue'
-import Modal from '@/components/base/Modal.vue'
+import Date from '@/components/Date.vue'
+
 import Pagination from '@/components/Pagination.vue'
-import PageCard from '@/components/PageCard.vue'
+import PageWrap from '@/components/PageWrap.vue'
 
 import useTable from '@/composables/useTable'
 import request from '@/api/request'
-import { formatDate } from '@/utils/helper'
+import api from '@/api'
+
+const permissionOptions = ref([])
 
 const {
-  list, keyword, loading, modalVisible, form, pos, limit, total,
+  list, keyword, loading, modalVisible, form, page, limit, total,
   handleQuery, handleSearch,
   handleShowAdd, handleAdd,
   handleShowEdit, handleEdit,
-  handleDelete, handleBatch,
+  handleDelete,
 } = useTable({
+  initForm: {
+    name: '',
+    label: '',
+    permission_ids: [],
+  },
   queryFn: params => request.post('/api/role', params),
   addFn: item => request.put('/api/role', item),
   deleteFn: id => request.delete(`/api/role/${id}`),
   editFn: item => request.patch(`/api/role/${item.id}`, item),
-  batchFn: ids => request.delete('/api/role', ids),
+  afterQuery: () => {
+    list.value = list.value.map(item => ({
+      ...item,
+      permission_ids: item.permissions.map(permission => permission.id),
+    }))
+  },
 })
 
-const bulkActions = [
-  {
-    name: 'Delete All',
-    clicked: keys => handleBatch(keys),
-  },
-]
+async function handleSaveOrUpdate() {
+  try {
+    form.value.id ? await handleEdit(form.value) : await handleAdd()
+    handleQuery()
+  }
+  catch (err) {
+    console.error(err)
+  }
+}
 
-onMounted(() => {
+async function handleInitDefaultRoles() {
+  try {
+    await api.initDefaultRoles()
+    handleQuery()
+  }
+  catch (err) {
+    console.error(err)
+  }
+}
+
+onMounted(async () => {
   handleQuery()
+  permissionOptions.value = await api.getPermissionOptions()
 })
 </script>
 
 <template>
-  <PageCard title="Role Page">
-    <div class="flex justify-between items-center">
-      <div class="w-64 sm:w-xs">
-        <Input
+  <PageWrap title="Role Page">
+    <template #description>
+      This page can only be managed (added, edited, deleted) by <span class="font-bold"> super user </span>.
+    </template>
+    <div class="flex items-center justify-between">
+      <div class="w-36 sm:w-52">
+        <UInput
           v-model="keyword"
-          suff-icon="i-mdi:magnify"
-          @append="handleSearch"
+          right-icon="i-mdi:magnify"
+          @click-right="handleSearch"
           @keyup.enter="handleSearch"
         />
       </div>
-      <div>
-        <Button type="primary" @click="handleShowAdd">
-          Add
-        </Button>
+      <div class="flex gap-2">
+        <UButton type="error" @click="handleInitDefaultRoles">
+          Init
+        </UButton>
+        <UButton type="primary" @click="handleShowAdd">
+          Add Role
+        </UButton>
       </div>
     </div>
     <div class="w-full text-center">
-      <Table :data="list" :loading="loading" :actions="bulkActions">
+      <UTable :data="list" :loading="loading" header-color>
         <template #headers>
-          <th scope="col" class="py-3.5 px-3 col-span-3 text-sm font-semibold text-gray-900 sm:pl-6">
-            CreatedAt
-          </th>
-          <th scope="col" class="py-3.5 px-3 col-span-3 text-sm font-semibold text-gray-900 sm:pl-6">
-            UpdatedAt
-          </th>
-          <th scope="col" class="py-3.5 px-3 col-span-3 text-sm font-semibold text-gray-900 sm:pl-6">
+          <th scope="col" class="table-th">
             Name
           </th>
-          <th scope="col" class="py-3.5 px-3 col-span-3 text-sm font-semibold text-gray-900 sm:pl-6">
+          <th scope="col" class="table-th">
             Label
           </th>
-          <th scope="col" class="px-4 py-3.5 col-span-3 text-sm font-semibold text-gray-900" />
+          <th scope="col" class="table-th">
+            CreatedAt
+          </th>
+          <th scope="col" class="table-th" />
         </template>
         <template #rows="{ row }">
-          <td class="w-16 whitespace-nowrap px-3.5 py-2 pl-4 sm:pl-6 text-sm text-gray-500">
-            {{ formatDate(row.createdAt) }}
-          </td>
-          <td class="w-16 whitespace-nowrap px-3.5 py-2 pl-4 sm:pl-6 text-sm text-gray-500">
-            {{ formatDate(row.updatedAt) }}
-          </td>
-          <td class="whitespace-nowrap px-3.5 py-2 pl-4 sm:pl-6 text-sm text-gray-500">
+          <td class="table-td">
             {{ row.name }}
           </td>
-          <td class="whitespace-nowrap px-3.5 py-2 pl-4 sm:pl-6 text-sm text-gray-500">
-            {{ row.label }}
+          <td class="table-td">
+            <UTag type="success">
+              {{ row.label }}
+            </UTag>
           </td>
-          <td class="w-32 whitespace-nowrap px-3.5 py-2 text-lg text-gray-500 group">
-            <div class="flex items-center gap-2 lg:px-4">
-              <span
-                class="i-mdi:delete cursor-pointer invisible text-red-500 group-hover:visible"
+          <td class="table-td whitespace-nowrap">
+            <Date :value="row.createdAt" />
+          </td>
+          <td class="table-td">
+            <div class="flex items-center gap-4 text-xl">
+              <button
+                class="i-mdi:delete text-red-400 hover:text-red-500"
                 @click="handleDelete(row.id)"
               />
-              <span
-                class="i-mdi:book-edit cursor-pointer invisible text-green-500 group-hover:visible"
+              <button
+                class="i-mdi:book-edit text-green-400 hover:text-green-500"
                 @click="handleShowEdit(row)"
               />
             </div>
           </td>
         </template>
-      </Table>
+      </UTable>
     </div>
     <Pagination
-      v-model:pos="pos"
+      v-model:page="page"
       v-model:limit="limit"
       :total="total"
       @query="handleQuery"
     />
-  </PageCard>
-  <Modal v-model="modalVisible">
-    <div class="text-lg font-bold mb-5">
+  </PageWrap>
+
+  <UModal v-model="modalVisible">
+    <template #header>
       {{ form.id ? 'Edit Role' : 'Add Role' }}
-    </div>
+    </template>
     <div class="space-y-3">
-      <Input v-model="form.name" label="Name" />
-      <Input v-model="form.label" label="Label" />
+      <UInput v-model="form.name" label="Name" />
+      <UInput v-model="form.label" label="Label" />
+      <div class="space-y-2">
+        <span> Role Permissions: </span>
+        <UTree
+          v-model="form.permission_ids"
+          :options="permissionOptions"
+          selectable
+          cascade
+        />
+      </div>
     </div>
-    <div class="mt-5 sm:gap-3 sm:mt-4 sm:flex sm:flex-row-reverse">
-      <Button v-if="form.id" type="success" @click="handleEdit(form)">
+    <template #footer>
+      <UButton v-if="form.id" type="warning" @click="handleSaveOrUpdate">
         Edit
-      </Button>
-      <Button v-else type="primary" @click="handleAdd">
+      </UButton>
+      <UButton v-else type="primary" @click="handleSaveOrUpdate">
         Add
-      </Button>
-      <Button class="mt-3 sm:mt-0" @click="modalVisible = false">
+      </UButton>
+      <UButton @click="modalVisible = false">
         Cancel
-      </Button>
-    </div>
-  </Modal>
+      </UButton>
+    </template>
+  </UModal>
 </template>

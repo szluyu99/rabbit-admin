@@ -1,4 +1,8 @@
-lockfileVersion: '6.0'
+lockfileVersion: '6.1'
+
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
 
 dependencies:
   '@vueuse/components':
@@ -16,6 +20,12 @@ dependencies:
   pinia:
     specifier: ^2.0.35
     version: 2.0.35(typescript@4.9.5)(vue@3.2.47)
+  pinia-plugin-persistedstate:
+    specifier: ^3.1.0
+    version: 3.1.0(pinia@2.0.35)
+  unocss-ui:
+    specifier: 0.0.3-alpha.4
+    version: 0.0.3-alpha.4
   vue:
     specifier: ^3.2.47
     version: 3.2.47
@@ -27,9 +37,12 @@ devDependencies:
   '@antfu/eslint-config':
     specifier: ^0.35.3
     version: 0.35.3(eslint@8.38.0)(typescript@4.9.5)
-  '@iconify/json':
-    specifier: ^2.2.61
-    version: 2.2.61
+  '@iconify-json/heroicons':
+    specifier: ^1.1.10
+    version: 1.1.10
+  '@iconify-json/mdi':
+    specifier: ^1.1.51
+    version: 1.1.51
   '@julr/unocss-preset-forms':
     specifier: ^0.0.5
     version: 0.0.5(unocss@0.50.8)
@@ -503,11 +516,16 @@ packages:
     resolution: {integrity: sha512-ZnQMnLV4e7hDlUvw8H+U8ASL02SS2Gn6+9Ac3wGGLIe7+je2AeAOxPY+izIPJDfFDb7eDjev0Us8MO1iFRN8hA==}
     dev: true
 
-  /@iconify/json@2.2.61:
-    resolution: {integrity: sha512-N2aHf3iIE7CWnZieytACY3K5auRyE25Nc4rEuKwMIH/hkbNNgYubPvMqpEqIOHkv/0QsDQXPeeG1tK27wiXgWA==}
+  /@iconify-json/heroicons@1.1.10:
+    resolution: {integrity: sha512-BQNQIQEL6QZ4FoPxJzLrTBAz7OHQezFFdEEl3gyDOZK8rawIIaPl7AtOZrvyOoSgtkU/Xp8V9pJ5JekdREEsQA==}
     dependencies:
       '@iconify/types': 2.0.0
-      pathe: 1.1.0
+    dev: true
+
+  /@iconify-json/mdi@1.1.51:
+    resolution: {integrity: sha512-fyf4N7GBaUw2A//v3vjsJ440qd69c+pN4PazOp6901ALM3QcKGAVWcISOhZ1J6jVF2zNsxrwMYHoOoP2UrAkCw==}
+    dependencies:
+      '@iconify/types': 2.0.0
     dev: true
 
   /@iconify/types@2.0.0:
@@ -928,6 +946,21 @@ packages:
       '@typescript-eslint/types': 5.59.2
       eslint-visitor-keys: 3.4.1
     dev: true
+
+  /@unocss-ui/components@0.0.2-alpha.6:
+    resolution: {integrity: sha512-/DeM/sGLtnk6eMPVxMCg0VVZC5jz7FHaj2Z0G+h4pub3BzfdCTGJF2KjKrpbgBJmF+4v8isIIVWmnrpZnnWNJQ==}
+    dependencies:
+      '@vueuse/components': 10.1.2(vue@3.2.47)
+      '@vueuse/core': 10.1.2(vue@3.2.47)
+      lodash-es: 4.17.21
+      vue: 3.2.47
+    transitivePeerDependencies:
+      - '@vue/composition-api'
+    dev: false
+
+  /@unocss-ui/preset@0.0.1-alpha.3:
+    resolution: {integrity: sha512-ykTla+1/EyoiwSbcCB2mckhQg+QxhjEqOKg1dFb0FJOJ1FaJjwiQJFzAXaCd/YB2Pmpw5hPDxaLJ4e/BVw3XaQ==}
+    dev: false
 
   /@unocss/astro@0.50.8(vite@4.3.5):
     resolution: {integrity: sha512-kphNlr0PWGzvkCgKx7RaZWQ45khieCCt9OffUnxbRRft+jodsVXIwzHn+bOhGtIKpEpZiOzxRzTYjfW/R6XnTw==}
@@ -3987,6 +4020,14 @@ packages:
     engines: {node: '>=8.6'}
     dev: true
 
+  /pinia-plugin-persistedstate@3.1.0(pinia@2.0.35):
+    resolution: {integrity: sha512-8UN+vYMEPBdgNLwceY08mi5olI0wkYaEb8b6hD6xW7SnBRuPydWHlEhZvUWgNb/ibuf4PvufpvtS+dmhYjJQOw==}
+    peerDependencies:
+      pinia: ^2.0.0
+    dependencies:
+      pinia: 2.0.35(typescript@4.9.5)(vue@3.2.47)
+    dev: false
+
   /pinia@2.0.35(typescript@4.9.5)(vue@3.2.47):
     resolution: {integrity: sha512-P1IKKQWhxGXiiZ3atOaNI75bYlFUbRxtJdhPLX059Z7+b9Z04rnTZdSY8Aph1LA+/4QEMAYHsTQ638Wfe+6K5g==}
     peerDependencies:
@@ -4686,6 +4727,15 @@ packages:
     dependencies:
       '@types/unist': 2.0.6
     dev: true
+
+  /unocss-ui@0.0.3-alpha.4:
+    resolution: {integrity: sha512-xkk+JGXHik6N9dkqxRJiLW9Fhm2YKvXhSTyKrSMQxUV+dwv8gMJ7kMWuEyXil80lFzXroVuJ1DUR2JdFjQEzbA==}
+    dependencies:
+      '@unocss-ui/components': 0.0.2-alpha.6
+      '@unocss-ui/preset': 0.0.1-alpha.3
+    transitivePeerDependencies:
+      - '@vue/composition-api'
+    dev: false
 
   /unocss@0.50.8(postcss@8.4.23)(vite@4.3.5):
     resolution: {integrity: sha512-3yqKkSm/SKCKxFolXNR12Mi64lr4PW95LSHKZ/a9Yzlf2PT1NirAn8/uJ8KoJJBNR2YWobtkLi4UplFz/8IAYA==}

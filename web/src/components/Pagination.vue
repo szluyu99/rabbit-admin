@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
-import Select from '@/components/base/Select.vue'
+import { USelect } from 'unocss-ui'
 
 const props = defineProps({
   total: { type: Number, default: 0 },
@@ -58,11 +58,11 @@ const options = [
       <span class="text-gray-600"> {{ total }}</span>
       <span class="xs:block ml-4 hidden text-gray-700"> View </span>
       <div class="ml-2 w-20">
-        <Select
+        <USelect
           v-model="limit"
           :options="options"
           :placeholder="String(limit)"
-          @change="updateLimit"
+          @update:model-value="updateLimit"
         />
       </div>
     </div>
@@ -72,13 +72,13 @@ const options = [
     >
       <div class="flex flex-1 justify-between sm:justify-end space-x-3">
         <button
-          class="relative inline-flex items-center border border-gray-300 rounded-md bg-white p-1 px-2 py-1 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          class="relative inline-flex items-center border border-gray-300 rounded-md bg-white p-1 px-2 py-1 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
           @click="handlePrev"
         >
           <span class="i-mdi:chevron-left h-5 w-5" />
         </button>
         <button
-          class="relative inline-flex items-center border border-gray-300 rounded-md bg-white p-1 px-2 py-1 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          class="relative inline-flex items-center border border-gray-300 rounded-md bg-white p-1 px-2 py-1 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
           @click="handleNext"
         >
           <span class="i-mdi:chevron-right h-5 w-5" />

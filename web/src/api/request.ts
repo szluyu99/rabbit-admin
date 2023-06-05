@@ -1,4 +1,5 @@
 import { getToken } from '@/utils/token'
+import { toast } from '@/composables/useToast'
 
 export async function handleResult(resp: Response) {
   if (resp.status !== 200) {
@@ -10,6 +11,11 @@ export async function handleResult(resp: Response) {
     }
     if (!reason)
       reason = resp.statusText
+
+    // global error handler
+    toast.error(reason)
+    console.error(reason)
+
     return Promise.reject(reason)
   }
   return await resp.json()
@@ -50,7 +56,12 @@ class Request {
   }
 
   async get(url: RequestInfo) {
-    const resp = await fetch(url)
+    const headers = new Headers({})
+    const token = getToken()
+    token && headers.set('Authorization', `Bearer ${token}`)
+
+    const resp = await fetch(url, { headers })
+
     return await handleResult(resp)
   }
 }

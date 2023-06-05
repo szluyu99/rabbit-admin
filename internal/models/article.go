@@ -3,7 +3,6 @@ package models
 import (
 	"time"
 
-	"github.com/szluyu99/rabbit"
 	"gorm.io/gorm"
 )
 
@@ -23,7 +22,7 @@ type Article struct {
 	ID        uint      `json:"id" gorm:"primarykey"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
-	GroupID   uint      `json:"group_id"`
+	// GroupID   uint      `json:"group_id"`
 
 	Title       string `json:"title" gorm:"type:varchar(100);not null"`
 	Desc        string `json:"desc" gorm:"type:varchar(200)"`
@@ -36,12 +35,12 @@ type Article struct {
 	OriginalUrl string `json:"original_url" gorm:"type:varchar(100)"`
 
 	CategoryId uint `json:"category_id"`
-	UserId     uint `json:"user_id"`
+	// UserId     uint `json:"user_id"`
 
-	User     *rabbit.User  `json:"user" gorm:"foreignkey:UserId"`
-	Group    *rabbit.Group `json:"-"`
-	Category *Category     `json:"category" gorm:"foreignkey:CategoryId"`
-	Tags     []*Tag        `json:"tags" gorm:"many2many:article_tag;"`
+	// User *rabbit.User `json:"user" gorm:"foreignkey:UserId"`
+	// Group    *rabbit.Group `json:"-"`
+	Category *Category `json:"category" gorm:"foreignkey:CategoryId"`
+	Tags     []*Tag    `json:"tags" gorm:"many2many:article_tag;"`
 }
 
 // delete article_tag
@@ -75,7 +74,7 @@ func SaveOrUpdateArticle(db *gorm.DB, id uint, title, content, cover, typ, statu
 	if article.ID != 0 {
 		if err := db.Model(&article).
 			Select("*").
-			Omit("user_id").
+			Omit("user_id", "created_at").
 			Updates(&article).Error; err != nil {
 			return err
 		}
@@ -86,7 +85,7 @@ func SaveOrUpdateArticle(db *gorm.DB, id uint, title, content, cover, typ, statu
 	}
 
 	// 3
-	if err := db.Delete(&ArticleTag{}, "article_id = ?", article.ID).Error; err != nil {
+	if err := db.Delete(&ArticleTag{}, "article_id", article.ID).Error; err != nil {
 		return err
 	}
 
@@ -108,23 +107,19 @@ func SaveOrUpdateArticle(db *gorm.DB, id uint, title, content, cover, typ, statu
 	return nil
 }
 
-func GetArticleList(db *gorm.DB, page, limit int, keyword, typ, status string, tagId, categoryId int) ([]Article, int, error) {
+func GetArticleList(db *gorm.DB, page, limit int, keyword, typ, status string, isDelete bool, tagId, categoryId int) ([]Article, int, error) {
 	var list = make([]Article, 0)
 
 	db = db.Model(&Article{})
-
 	if keyword != "" {
 		db = db.Where("title LIKE ? OR desc LIKE ?", "%"+keyword+"%", "%"+keyword+"%")
 	}
-
 	if typ != "" {
 		db = db.Where("type = ?", typ)
 	}
-
 	if status != "" {
 		db = db.Where("status = ?", status)
 	}
-
 	if categoryId > 0 {
 		db = db.Where("category_id = ?", categoryId)
 	}
@@ -135,6 +130,8 @@ func GetArticleList(db *gorm.DB, page, limit int, keyword, typ, status string, t
 	if tagId > 0 {
 		db = db.Where("tag_id", tagId)
 	}
+
+	db = db.Where("is_delete = ?", isDelete)
 
 	var count int64
 	db.Count(&count)
@@ -147,13 +144,4 @@ func GetArticleList(db *gorm.DB, page, limit int, keyword, typ, status string, t
 	}
 
 	return list, int(count), nil
-}
-
-func GetArticle(db *gorm.DB, key string) (*Article, error) {
-	var article Article
-	result := db.Where("id", key).Preload("Category").Preload("Tags").First(&article)
-	if result.Error != nil {
-		return nil, result.Error
-	}
-	return &article, nil
 }

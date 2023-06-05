@@ -17,7 +17,6 @@ export default defineConfig(({ mode }) => {
     },
     plugins: [
       Vue(),
-      // https://github.com/unocss/unocss
       Unocss(), // uno.config.ts
       visualizer({
         open: true,
@@ -32,6 +31,10 @@ export default defineConfig(({ mode }) => {
           changeOrigin: true,
         },
         '/auth': {
+          target: 'http://localhost:8765',
+          changeOrigin: true,
+        },
+        '/config': {
           target: 'http://localhost:8765',
           changeOrigin: true,
         },

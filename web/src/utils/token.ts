@@ -1,7 +1,7 @@
 import { getLocal, getLocalExpire, setLocal } from './local'
 
 const TOKEN_KEY = 'access_token'
-const DURATION = 6 * 60 * 60 * 1000 // 6 hour
+const DURATION = 24 * 60 * 60 * 1000 // 24 hour
 
 export function getToken() {
   return getLocal(TOKEN_KEY)

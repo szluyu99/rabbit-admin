@@ -1,15 +1,15 @@
 {
   "name": "rabbit-admin",
-  "private": true,
-  "version": "0.0.0",
   "type": "module",
+  "version": "0.0.0",
+  "private": true,
   "scripts": {
     "dev": "vite",
     "build": "vue-tsc && vite build",
     "preview": "vite preview",
     "up": "taze major -I",
-    "lint": "eslint .",
-    "lint:fix": "eslint . --fix"
+    "lint": "eslint --ext .ts,.vue .",
+    "lint:fix": "eslint --ext .ts,.vue . --fix"
   },
   "dependencies": {
     "@vueuse/components": "^10.1.2",
@@ -17,12 +17,15 @@
     "lodash-es": "^4.17.21",
     "marked": "^5.0.1",
     "pinia": "^2.0.35",
+    "pinia-plugin-persistedstate": "^3.1.0",
+    "unocss-ui": "0.0.3-alpha.4",
     "vue": "^3.2.47",
     "vue-router": "^4.1.6"
   },
   "devDependencies": {
     "@antfu/eslint-config": "^0.35.3",
-    "@iconify/json": "^2.2.61",
+    "@iconify-json/heroicons": "^1.1.10",
+    "@iconify-json/mdi": "^1.1.51",
     "@julr/unocss-preset-forms": "^0.0.5",
     "@types/lodash-es": "^4.17.7",
     "@types/marked": "^4.3.0",
@@ -44,6 +47,9 @@
     "extends": [
       "@antfu",
       "@unocss"
-    ]
+    ],
+    "rules": {
+      "no-alert": "off"
+    }
   }
 }

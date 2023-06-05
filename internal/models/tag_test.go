@@ -3,7 +3,6 @@ package models
 import (
 	"testing"
 
-	"github.com/restsend/gormpher"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -17,11 +16,11 @@ func TestCheckTagExistByName(t *testing.T) {
 func TestCreateTagsByNames(t *testing.T) {
 	db := initDB()
 	CreateTagsByNames(db, []string{"test1", "test2", "test3"})
-	c, _ := gormpher.Count[Tag](db)
+	c, _ := Count[Tag](db)
 	assert.Equal(t, 3, c)
 
 	CreateTagsByNames(db, []string{"test1", "test2", "test3", "test4"})
-	c, _ = gormpher.Count[Tag](db)
+	c, _ = Count[Tag](db)
 	assert.Equal(t, 4, c)
 }
 

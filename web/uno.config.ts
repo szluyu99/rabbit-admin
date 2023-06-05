@@ -8,13 +8,14 @@ import {
   transformerVariantGroup,
 } from 'unocss'
 
-import { presetForms } from '@julr/unocss-preset-forms'
 import { colors } from 'unocss/preset-mini'
+import { presetUnocssUI } from 'unocss-ui'
 
 export default defineConfig({
+  safelist: ['i-mdi:pen', 'i-mdi:blogger', 'i-mdi:menu', 'i-mdi:tag', 'i-mdi:power', 'i-mdi:ab-testing', 'i-mdi:group', 'i-mdi:account', 'i-mdi:cog-transfer'],
   theme: {
     colors: {
-      primary: colors.indigo,
+      primary: colors.violet,
       secondary: colors.teal,
       accent: colors.pink,
       success: colors.green,
@@ -23,20 +24,15 @@ export default defineConfig({
       error: colors.red,
     },
   },
-  shortcuts: [
-    ['btn', 'px-4 py-1 rounded inline-block bg-teal-600 text-white cursor-pointer focus:outline-none focus:ring-offset-2 focus:ring-teal-500 hover:bg-teal-700 disabled:cursor-default disabled:bg-gray-600 disabled:opacity-50'],
-  ],
   presets: [
     presetUno(),
-    presetForms(),
     presetTypography(),
     presetIcons(),
     presetWebFonts({
       provider: 'bunny',
-      fonts: {
-        sans: 'Inter',
-      },
+      fonts: { sans: 'Inter' },
     }),
+    presetUnocssUI(),
   ],
   transformers: [
     transformerDirectives(),

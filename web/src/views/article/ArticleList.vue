@@ -1,24 +1,29 @@
 <script setup>
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
+import { UButton, UInput, USelect, USwitch, UTable, UTag } from 'unocss-ui'
 
-import Table from '@/components/base/Table.vue'
-import Input from '@/components/base/Input.vue'
-import Select from '@/components/base/Select.vue'
-import Button from '@/components/base/Button.vue'
+import Date from '@/components/Date.vue'
 import Pagination from '@/components/Pagination.vue'
-import PageCard from '@/components/PageCard.vue'
-import Tag from '@/components/base/Tag.vue'
-import Switch from '@/components/base/Switch.vue'
+import PageWrap from '@/components/PageWrap.vue'
+import { useConfirm } from '@/composables/useConfirm'
 
-import { formatDate } from '@/utils/helper'
 import useTable from '@/composables/useTable'
 import request from '@/api/request'
 import api from '@/api'
 
+const tabs = ref([
+  { name: 'All', value: '', current: true },
+  { name: 'Public', value: 'public', current: false },
+  { name: 'Private', value: 'private', current: false },
+  { name: 'Draft', value: 'draft', current: false },
+  { name: 'Trash', value: 'trash', current: false },
+])
+
+const currentTab = computed(() => tabs.value.find(e => e.current).value)
+
 const {
   list, keyword, loading, page, limit, total, queryParams,
-  handleQuery, handleSearch,
-  handleDelete, handleBatch,
+  handleQuery, handleSearch, handleDelete, handleBatchDelete,
 } = useTable({
   queryFn: params => request.post('/api/article', params),
   addFn: item => request.put('/api/article', item),
@@ -29,13 +34,20 @@ const {
     tag_id: 0,
     category_id: 0,
     type: '',
+    is_delete: false,
   },
+})
+
+onMounted(() => {
+  handleQuery()
 })
 
 const bulkActions = [
   {
     name: 'Delete All',
-    clicked: keys => handleBatch(keys),
+    clicked: (keys) => {
+      currentTab.value === 'trash' ? handleBatchDelete(keys) : handleBatchSoftDelete(keys)
+    },
   },
   {
     name: 'Export All',
@@ -43,19 +55,46 @@ const bulkActions = [
   },
 ]
 
-async function toggleIsStop(id, val) {
+async function handleToggleTop(row, val) {
   try {
-    await request.patch(`/api/article/${id}`, { is_top: val })
-    handleQuery()
+    row.toggleLoading = true
+    await request.patch(`/api/article/${row.id}`, { is_top: val })
+    setTimeout(() => {
+      row.toggleLoading = false
+      row.is_top = val
+    }, 300)
   }
   catch (err) {
-    console.error(err)
+    row.toggleLoading = false
   }
 }
 
-onMounted(() => {
+function handleBatchSoftDelete(ids) {
+  useConfirm({
+    title: 'Delete Confirm',
+    content: 'Are you sure to delete the selected articles? They will be moved to trash.',
+    onOk: async () => {
+      await Promise.all(ids.map(id => request.patch(`/api/article/${id}`, { is_delete: true })))
+      handleQuery()
+    },
+  })
+}
+
+function handleSoftDelete(row) {
+  useConfirm({
+    title: 'Delete Confirm',
+    content: `Are you sure to delete the article: <span class="font-bold">${row.title}</span>? It will be moved to trash.`,
+    onOk: async () => {
+      await request.patch(`/api/article/${row.id}`, { is_delete: true })
+      handleQuery()
+    },
+  })
+}
+
+async function handleCancelSoftDelete(row) {
+  await request.patch(`/api/article/${row.id}`, { is_delete: false })
   handleQuery()
-})
+}
 
 const tagOptions = ref([])
 const categoryOptions = ref([])
@@ -65,41 +104,10 @@ const typeOptions = [
   { label: 'translation', value: 'translation' },
 ]
 
-onMounted(() => {
-  api.tagOptions().then((res) => {
-    tagOptions.value = (res.items || []).map(e => ({
-      label: e.name,
-      value: e.id,
-    }))
-  })
-  api.categoryOptions().then((res) => {
-    categoryOptions.value = (res.items || []).map(e => ({
-      label: e.name,
-      value: e.id,
-    }))
-  })
+onMounted(async () => {
+  tagOptions.value = await api.getTagOptions()
+  categoryOptions.value = await api.getCategoryOptions()
 })
-
-function typeTag(type) {
-  switch (type) {
-    case 'original':
-      return 'primary'
-    case 'reprint':
-      return 'secondary'
-    case 'translation':
-      return 'accent'
-    default:
-      return 'default'
-  }
-}
-
-const tabs = ref([
-  { name: 'All', value: '', current: true },
-  { name: 'Public', value: 'public', current: false },
-  { name: 'Private', value: 'private', current: false },
-  { name: 'Draft', value: 'draft', current: false },
-  { name: 'Trash', value: 'trash', current: false },
-])
 
 function handleClickTab(tab) {
   tabs.value.forEach(e => e.current = e.name === tab.name)
@@ -113,21 +121,29 @@ function handleClickTab(tab) {
   }
   handleQuery()
 }
+
+const typeTypes = {
+  original: 'primary',
+  reprint: 'secondary',
+  translation: 'accent',
+}
 </script>
 
 <template>
-  <PageCard title="Article Page">
+  <PageWrap title="Article Page">
     <div>
       <div class="sm:hidden">
-        <label for="tabs" class="sr-only">Select a tab</label>
-        <!-- Use an "onChange" listener to redirect the user to the selected tab URL. -->
+        <label for="tabs" class="sr-only">USelect a tab</label>
+        <!-- Use an "onChange" listener to redirect the user to the USelected tab URL. -->
         <select
           id="tabs"
           name="tabs"
-          class="block w-full border-gray-300 rounded-md py-1.5 pl-3 pr-10 text-base focus:border-indigo-500 sm:text-sm focus:outline-none focus:ring-indigo-500"
+          class="block w-full border-gray-300 rounded-md py-1 pl-3 pr-10 text-base focus:border-indigo-500 sm:text-sm focus:outline-none focus:ring-indigo-500"
         >
           <option
-            v-for="tab in tabs" :key="tab.name" :selected="tab.current"
+            v-for="tab in tabs"
+            :key="tab.name"
+            :selected="tab.current"
             @change="handleClickTab($event)"
           >
             {{ tab.name }}
@@ -136,7 +152,7 @@ function handleClickTab(tab) {
       </div>
       <div class="hidden sm:block">
         <div class="border-b border-gray-200">
-          <nav class="flex -mb-px space-x-8" aria-label="Tabs">
+          <nav class="flex -mb-px space-x-5" aria-label="Tabs">
             <span class="cursor-default whitespace-nowrap px-1 py-4 text-sm font-medium">
               Status
             </span>
@@ -154,121 +170,133 @@ function handleClickTab(tab) {
       </div>
     </div>
     <div class="flex items-center justify-between">
-      <div class="w-full flex flex-wrap items-center gap-1 sm:flex sm:gap-4">
-        <div class="w-56">
-          <Input
+      <div class="w-full flex flex-wrap items-center gap-1 sm:gap-3">
+        <div class="w-52">
+          <UInput
             v-model="keyword"
-            suff-icon="i-mdi:magnify"
             placeholder="Search title"
-            @append="handleSearch"
+            right-icon="i-mdi:magnify"
+            @click-right="handleSearch"
             @keyup.enter="handleSearch"
           />
         </div>
-        <div class="w-44">
-          <Select
+        <div class="w-36">
+          <USelect
             v-model="queryParams.type"
             :options="typeOptions"
             placeholder="Type"
             clearable
-            @change="handleQuery"
+            @update:model-value="handleQuery"
           />
         </div>
-        <div class="w-44">
-          <Select
+        <div class="w-36">
+          <USelect
             v-model="queryParams.tag_id"
             :options="tagOptions"
             placeholder="Tag"
             clearable
-            @change="handleQuery"
+            @update:model-value="handleQuery"
           />
         </div>
-        <div class="w-44">
-          <Select
+        <div class="w-36">
+          <USelect
             v-model="queryParams.category_id"
             :options="categoryOptions"
             placeholder="Category"
             clearable
-            @change="handleQuery"
+            @update:model-value="handleQuery"
           />
         </div>
       </div>
-      <div>
-        <Button type="primary" @click="$router.push('/article/write')">
-          Write Article
-        </Button>
-      </div>
+      <UButton type="primary" @click="$router.push('/article/write')">
+        Write Article
+      </UButton>
     </div>
     <div class="w-full text-center">
-      <Table :data="list" :loading="loading" :actions="bulkActions">
+      <UTable :data="list" :loading="loading" :actions="bulkActions" header-color>
         <template #headers>
-          <th scope="col" class="col-span-3 px-3 py-3.5 text-sm font-semibold text-gray-900 sm:pl-6">
+          <th scope="col" class="table-th">
             Cover
           </th>
-          <th scope="col" class="col-span-3 px-3 py-3.5 text-sm font-semibold text-gray-900 sm:pl-6">
+          <th scope="col" class="table-th max-w-64">
             Title
           </th>
-          <th scope="col" class="col-span-3 px-3 py-3.5 text-sm font-semibold text-gray-900 sm:pl-6">
+          <th scope="col" class="table-th">
             Category
           </th>
-          <th scope="col" class="col-span-3 px-3 py-3.5 text-sm font-semibold text-gray-900 sm:pl-6">
+          <th scope="col" class="table-th">
             Tags
           </th>
-          <th scope="col" class="col-span-3 px-3 py-3.5 text-sm font-semibold text-gray-900 sm:pl-6">
+          <th scope="col" class="table-th">
             Type
           </th>
-          <th scope="col" class="col-span-3 px-3 py-3.5 text-sm font-semibold text-gray-900 sm:pl-6">
+          <th scope="col" class="table-th">
             UpdatedAt
           </th>
-          <th scope="col" class="col-span-3 px-3 py-3.5 text-sm font-semibold text-gray-900 sm:pl-6">
+          <th scope="col" class="table-th">
             IsTop
           </th>
           <th scope="col" class="col-span-3 px-4 py-3.5 text-sm font-semibold text-gray-900" />
         </template>
         <template #rows="{ row }">
-          <td class="whitespace-nowrap px-3.5 py-2 pl-4 text-sm text-gray-500 sm:pl-6">
-            <img class="w-32" :src="row.cover" alt="">
+          <td class="table-td">
+            <img class="min-w-20" :src="row.cover" alt="">
           </td>
-          <td class="whitespace-nowrap px-3.5 py-2 pl-4 text-sm text-gray-500 sm:pl-6">
+          <td class="table-td max-w-64">
             {{ row.title }}
           </td>
-          <td class="whitespace-nowrap px-3.5 py-2 pl-4 text-sm text-gray-500 sm:pl-6">
+          <td class="table-td">
             {{ row.category?.name }}
           </td>
-          <td class="whitespace-nowrap px-3.5 py-2 pl-4 text-sm text-gray-500 sm:pl-6">
-            <Tag v-for="tag of row.tags" :key="tag.id" type="success" class="ml-2">
-              {{ tag.name }}
-            </Tag>
+          <td class="table-td">
+            <div class="flex gap-2">
+              <UTag v-for="tag of row.tags" :key="tag.id" type="success">
+                {{ tag.name }}
+              </UTag>
+            </div>
           </td>
-          <td class="whitespace-nowrap px-3.5 py-2 pl-4 text-sm text-gray-500 sm:pl-6">
-            <Tag :type="typeTag(row.type)">
+          <td class="table-td">
+            <UTag :type="typeTypes[row.type]">
               {{ row.type }}
-            </Tag>
+            </UTag>
           </td>
-          <td class="whitespace-nowrap px-3.5 py-2 pl-4 text-sm text-gray-500 sm:pl-6">
-            <div class="flex items-center justify-center gap-1">
-              <span class="i-mdi:calendar-clock text-lg text-gray-400" />
-              {{ formatDate(row.updated_at) }}
+          <td class="table-td whitespace-nowrap">
+            <Date :value="row.updated_at" />
+          </td>
+          <td class="table-td">
+            <div class="flex items-center">
+              <USwitch
+                :model-value="row.is_top"
+                :loading="row.toggleLoading"
+                @update:model-value="handleToggleTop(row, $event)"
+              />
             </div>
           </td>
-          <td class="whitespace-nowrap px-3.5 py-2 pl-4 text-sm text-gray-500 sm:pl-6">
-            <div class="flex items-center justify-center">
-              <Switch v-model="row.is_top" @update:model-value="toggleIsStop(row.id, $event)" />
-            </div>
-          </td>
-          <td class="w-32 whitespace-nowrap px-3.5 py-2 text-xl text-gray-500">
-            <div class="flex items-center gap-5 lg:px-4">
+          <td class="table-td w-32">
+            <div class="flex items-center gap-4 text-xl">
               <span
+                v-if="!row.is_delete"
                 class="i-mdi:delete cursor-pointer text-red-400 hover:text-red-500"
-                @click="handleDelete(row.id)"
+                @click="handleSoftDelete(row)"
+              />
+              <span
+                v-else
+                class="i-mdi:backburger cursor-pointer text-green-400 hover:text-green-500"
+                @click="handleCancelSoftDelete(row)"
               />
               <span
                 class="i-mdi:pen cursor-pointer text-primary-400 hover:text-primary-500"
                 @click="$router.push(`/article/write/${row.id}`)"
               />
+              <span
+                v-if="row.is_delete"
+                class="i-mdi:delete cursor-pointer text-red-400 hover:text-red-500"
+                @click="handleDelete(row.id)"
+              />
             </div>
           </td>
         </template>
-      </Table>
+      </UTable>
     </div>
     <Pagination
       v-model:page="page"
@@ -276,5 +304,5 @@ function handleClickTab(tab) {
       :total="total"
       @query="handleQuery"
     />
-  </PageCard>
+  </PageWrap>
 </template>

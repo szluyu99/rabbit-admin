@@ -10,43 +10,32 @@ import (
 
 func (m *ServerManager) articleObject() rabbit.WebObject {
 	return rabbit.WebObject{
-		Name:        "article",
-		Model:       &models.Article{},
-		GetDB:       m.getDB,
-		Editables:   []string{"Title", "Desc", "Content", "Img", "Type", "Status", "IsTop", "IsDelete", "OriginalUrl"},
-		Searchables: []string{"Name", "Desc"},
-		Filterables: []string{"Type", "Status", "IsTop", "IsDelete"},
-		OnCreate: func(c *gin.Context, vptr any) error {
-			v := vptr.(*models.Article)
-			user := rabbit.CurrentUser(c)
-			v.UserId = user.ID
-			return nil
-		},
+		Name:         "article",
+		Model:        &models.Article{},
+		GetDB:        m.getDB,
+		Editables:    []string{"Title", "Desc", "Content", "Img", "Type", "Status", "IsTop", "IsDelete", "OriginalUrl"},
+		Searchables:  []string{"Name", "Desc"},
+		Filterables:  []string{"Type", "Status", "IsTop", "IsDelete"},
 		AllowMethods: rabbit.BATCH | rabbit.DELETE | rabbit.EDIT,
 	}
 }
 
 func (m *ServerManager) handleGetArticle(c *gin.Context) {
-	key := c.Param("id")
-	article, err := models.GetArticle(m.db, key)
-	if err != nil {
-		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
-	c.JSON(http.StatusOK, article)
+	db := m.db.Preload("Tags").Preload("Category")
+	rabbit.HandleGet[models.Article](c, db, nil)
 }
 
-func (m *ServerManager) handleArticleList(c *gin.Context) {
+func (m *ServerManager) handleQueryArticle(c *gin.Context) {
 	var form ArticleQueryForm
 	if err := c.BindJSON(&form); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		handleError(c, http.StatusBadRequest, err)
 		return
 	}
 
 	page, limit := CheckPageLimit(form.Page, form.Limit)
-	list, count, err := models.GetArticleList(m.db, page, limit, form.Keyword, form.Type, form.Status, form.TagId, form.CategoryId)
+	list, count, err := models.GetArticleList(m.db, page, limit, form.Keyword, form.Type, form.Status, form.IsDelete, form.TagId, form.CategoryId)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		handleError(c, http.StatusInternalServerError, err)
 		return
 	}
 
@@ -62,7 +51,7 @@ func (m *ServerManager) handleArticleList(c *gin.Context) {
 func (m *ServerManager) handleSaveOrUpdateArticle(c *gin.Context) {
 	var form ArticleForm
 	if err := c.BindJSON(&form); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		handleError(c, http.StatusBadRequest, err)
 		return
 	}
 
@@ -78,7 +67,7 @@ func (m *ServerManager) handleSaveOrUpdateArticle(c *gin.Context) {
 		form.IsTop,
 		form.TagNames,
 	); err != nil {
-		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		handleError(c, http.StatusInternalServerError, err)
 		return
 	}
 

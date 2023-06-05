@@ -36,8 +36,8 @@ async function doSignup(e: Event) {
 </script>
 
 <template>
-  <div class="flex min-h-full flex-col justify-center mt-10 py-20 sm:px-6 lg:px-8">
-    <div class="sm:mx-auto sm:w-full sm:max-w-md">
+  <div class="mt-10 min-h-full flex flex-col justify-center py-20 lg:px-8 sm:px-6">
+    <div class="sm:mx-auto sm:max-w-md sm:w-full">
       <h2 class="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900">
         Free Sign Up
       </h2>
@@ -46,8 +46,8 @@ async function doSignup(e: Event) {
       </p>
     </div>
 
-    <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-      <div class="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+    <div class="mt-8 sm:mx-auto sm:max-w-md sm:w-full">
+      <div class="bg-white px-4 py-8 shadow sm:rounded-lg sm:px-10">
         <form class="space-y-5" method="POST" @submit="doSignup">
           <div class="flex">
             <div>
@@ -59,7 +59,7 @@ async function doSignup(e: Event) {
                   id="first-name"
                   v-model="signupForm.firstname"
                   name="first-name" type="text" autocomplete="first-name"
-                  class="block w-full appearance-none rounded-md border border-gray-300 px-3 py-1 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+                  class="block w-full appearance-none border border-gray-300 rounded-md px-3 py-1 shadow-sm focus:border-indigo-500 sm:text-sm focus:outline-none focus:ring-indigo-500 placeholder-gray-400"
                 >
               </div>
             </div>
@@ -73,7 +73,7 @@ async function doSignup(e: Event) {
                   id="last-name"
                   v-model="signupForm.lastname"
                   name="last-name" type="text" autocomplete="last-name"
-                  class="block w-full appearance-none rounded-md border border-gray-300 px-3 py-1 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+                  class="block w-full appearance-none border border-gray-300 rounded-md px-3 py-1 shadow-sm focus:border-indigo-500 sm:text-sm focus:outline-none focus:ring-indigo-500 placeholder-gray-400"
                 >
               </div>
             </div>
@@ -87,7 +87,7 @@ async function doSignup(e: Event) {
               <input
                 id="email"
                 v-model="signupForm.email" name="email" type="email" autocomplete="email" required
-                class="block w-full appearance-none rounded-md border border-gray-300 px-3 py-1 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+                class="block w-full appearance-none border border-gray-300 rounded-md px-3 py-1 shadow-sm focus:border-indigo-500 sm:text-sm focus:outline-none focus:ring-indigo-500 placeholder-gray-400"
               >
             </div>
           </div>
@@ -99,14 +99,14 @@ async function doSignup(e: Event) {
                 id="password"
                 v-model="signupForm.password"
                 name="password" type="password" required
-                class="block w-full appearance-none rounded-md border border-gray-300 px-3 py-1 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+                class="block w-full appearance-none border border-gray-300 rounded-md px-3 py-1 shadow-sm focus:border-indigo-500 sm:text-sm focus:outline-none focus:ring-indigo-500 placeholder-gray-400"
               >
             </div>
           </div>
 
           <button
             type="submit"
-            class="flex w-full justify-center rounded-md border cursor-pointer border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+            class="w-full flex cursor-pointer justify-center border border-transparent rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
           >
             Sign up
           </button>
@@ -114,10 +114,10 @@ async function doSignup(e: Event) {
       </div>
     </div>
 
-    <div class="text-gray-400 text-sm mt-6 text-center">
+    <div class="mt-6 text-center text-sm text-gray-400">
       Already have account?
       <div
-        class="ml-1 underline cursor-pointer"
+        class="ml-1 cursor-pointer underline"
         @click="$router.push('/signin')"
       >
         Sign In

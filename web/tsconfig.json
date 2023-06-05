@@ -13,17 +13,35 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "esModuleInterop": true,
-    "lib": ["ESNext", "DOM"],
+    "lib": [
+      "ESNext",
+      "DOM"
+    ],
     "skipLibCheck": true,
     "noEmit": true,
     "allowJs": true,
-    "baseUrl": "./", 
+    "baseUrl": "./",
     "paths": {
-      "@":["src"],
-      "@/*": ["src/*"],
+      "@": [
+        "src"
+      ],
+      "@/*": [
+        "src/*"
+      ]
     }
   },
-  "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.vue"],
-  "exclude": ["dist", "node_modules"],
-  "references": [{ "path": "./tsconfig.node.json" }]
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.d.ts",
+    "src/**/*.vue"
+  ],
+  "exclude": [
+    "dist",
+    "node_modules"
+  ],
+  "references": [
+    {
+      "path": "./tsconfig.node.json"
+    }
+  ]
 }

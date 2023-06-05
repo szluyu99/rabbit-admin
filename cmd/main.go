@@ -10,6 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/szluyu99/rabbit"
 	rabbitadmin "github.com/szluyu99/rabbit-admin/internal"
+	"gorm.io/gorm"
 )
 
 var fileMode os.FileMode = 0666
@@ -19,6 +20,9 @@ var (
 	logFile    string
 	dbDriver   string
 	dsn        string
+
+	superUserEmail    string
+	superUserPassword string
 )
 
 func main() {
@@ -26,7 +30,12 @@ func main() {
 	flag.StringVar(&logFile, "l", "", "log file")
 	flag.StringVar(&dbDriver, "d", "", "DB Driver, sqlite|mysql")
 	flag.StringVar(&dsn, "n", "", "DB DSN")
+	flag.StringVar(&superUserEmail, "superuser", "", "Create an super user with email")
+	flag.StringVar(&superUserPassword, "password", "", "Super user password")
 	flag.Parse()
+
+	// log flag
+	log.SetFlags(log.LstdFlags | log.Lshortfile)
 
 	var err error
 	var lw io.Writer
@@ -39,6 +48,11 @@ func main() {
 
 	// db
 	db := rabbit.InitDatabase(dbDriver, dsn, lw)
+
+	// create super user
+	if superUserEmail != "" && superUserPassword != "" {
+		createSuperUser(db, superUserEmail, superUserPassword)
+	}
 
 	// router
 	r := gin.New()
@@ -57,4 +71,26 @@ func main() {
 	}
 
 	r.Run(serverAddr)
+}
+
+func createSuperUser(db *gorm.DB, email, password string) {
+	u, err := rabbit.GetUserByEmail(db, email)
+	if err == nil && u != nil {
+		rabbit.SetPassword(db, u, password)
+		rabbit.Warningln("Super user password changed")
+	} else {
+		u, err := rabbit.CreateUser(db, email, password)
+		if err != nil {
+			panic(err)
+		}
+		u.Activated = true
+		u.Enabled = true
+		u.IsSuperUser = true
+		if err := db.Save(u).Error; err != nil {
+			panic(err)
+		}
+		rabbit.Warningln("Create super user:", email)
+		os.Exit(0)
+		return
+	}
 }

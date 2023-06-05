@@ -1,35 +1,31 @@
 <script setup>
 import { onMounted } from 'vue'
+import { UButton, UInput, UModal, UTable } from 'unocss-ui'
 
-import Table from '@/components/base/Table.vue'
-import Input from '@/components/base/Input.vue'
-import Button from '@/components/base/Button.vue'
-import Modal from '@/components/base/Modal.vue'
+import Date from '@/components/Date.vue'
 import Pagination from '@/components/Pagination.vue'
-import PageCard from '@/components/PageCard.vue'
+import PageWrap from '@/components/PageWrap.vue'
 
 import useTable from '@/composables/useTable'
 import request from '@/api/request'
-import { formatDate } from '@/utils/helper'
 
 const {
   list, keyword, loading, modalVisible, form, page, limit, total,
   handleQuery, handleSearch,
   handleShowAdd, handleAdd,
   handleShowEdit, handleEdit,
-  handleDelete, handleBatch,
+  handleDelete, handleBatchDelete,
 } = useTable({
   queryFn: params => request.post('/api/tag', params),
   addFn: item => request.put('/api/tag', item),
   deleteFn: id => request.delete(`/api/tag/${id}`),
   editFn: item => request.patch(`/api/tag/${item.id}`, item),
-  batchFn: ids => request.delete('/api/tag', ids),
 })
 
 const bulkActions = [
   {
     name: 'Delete All',
-    clicked: keys => handleBatch(keys),
+    clicked: keys => handleBatchDelete(keys),
   },
 ]
 
@@ -39,48 +35,48 @@ onMounted(() => {
 </script>
 
 <template>
-  <PageCard title="Tag Page">
+  <PageWrap title="Tag Page">
     <div class="flex items-center justify-between">
-      <div class="w-64 sm:w-xs">
-        <Input
+      <div class="w-52">
+        <UInput
           v-model="keyword"
-          suff-icon="i-mdi:magnify"
-          @append="handleSearch"
+          placeholder="Search name"
+          right-icon="i-mdi:magnify"
+          @click-right="handleSearch"
           @keyup.enter="handleSearch"
         />
       </div>
-      <div>
-        <Button type="primary" @click="handleShowAdd">
-          Add
-        </Button>
-      </div>
+      <UButton type="primary" @click="handleShowAdd">
+        Add Tag
+      </UButton>
     </div>
     <div class="w-full text-center">
-      <Table :data="list" :loading="loading" :actions="bulkActions">
+      <UTable :data="list" :loading="loading" :actions="bulkActions" header-color>
         <template #headers>
-          <th scope="col" class="col-span-3 px-3 py-3.5 text-sm font-semibold text-gray-900 sm:pl-6">
-            CreatedAt
-          </th>
-          <th scope="col" class="col-span-3 px-3 py-3.5 text-sm font-semibold text-gray-900 sm:pl-6">
-            UpdatedAt
-          </th>
-          <th scope="col" class="col-span-3 px-3 py-3.5 text-sm font-semibold text-gray-900 sm:pl-6">
+          <th scope="col" class="table-th">
             Name
           </th>
+          <th scope="col" class="table-th">
+            CreatedAt
+          </th>
+          <th scope="col" class="table-th">
+            UpdatedAt
+          </th>
+          <!-- TODO: Article Count -->
           <th scope="col" class="col-span-3 px-4 py-3.5 text-sm font-semibold text-gray-900" />
         </template>
         <template #rows="{ row }">
-          <td class="whitespace-nowrap px-3.5 py-2 pl-4 text-sm text-gray-500 sm:pl-6">
-            {{ formatDate(row.createdAt) }}
-          </td>
-          <td class="whitespace-nowrap px-3.5 py-2 pl-4 text-sm text-gray-500 sm:pl-6">
-            {{ formatDate(row.updatedAt) }}
-          </td>
-          <td class="whitespace-nowrap px-3.5 py-2 pl-4 text-sm text-gray-500 sm:pl-6">
+          <td class="table-td">
             {{ row.name }}
           </td>
-          <td class="w-32 whitespace-nowrap px-3.5 py-2 text-lg text-gray-500">
-            <div class="flex items-center gap-2 lg:px-4">
+          <td class="table-td whitespace-nowrap">
+            <Date :value="row.created_at" />
+          </td>
+          <td class="table-td whitespace-nowrap">
+            <Date :value="row.updated_at" />
+          </td>
+          <td class="table-td">
+            <div class="flex items-center gap-4 text-xl">
               <span
                 class="i-mdi:delete cursor-pointer text-red-500"
                 @click="handleDelete(row.id)"
@@ -92,7 +88,7 @@ onMounted(() => {
             </div>
           </td>
         </template>
-      </Table>
+      </UTable>
     </div>
     <Pagination
       v-model:page="page"
@@ -100,24 +96,25 @@ onMounted(() => {
       :total="total"
       @query="handleQuery"
     />
-  </PageCard>
-  <Modal v-model="modalVisible">
-    <div class="mb-5 text-lg font-bold">
+  </PageWrap>
+
+  <UModal v-model="modalVisible">
+    <template #header>
       {{ form.id ? 'Edit Tag' : 'Add Tag' }}
-    </div>
+    </template>
     <div class="space-y-3">
-      <Input v-model="form.name" label="Name" />
+      <UInput v-model="form.name" label="Name" />
     </div>
-    <div class="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse sm:gap-3">
-      <Button v-if="form.id" type="success" @click="handleEdit(form)">
+    <template #footer>
+      <UButton v-if="form.id" type="warning" @click="handleEdit(form)">
         Edit
-      </Button>
-      <Button v-else type="primary" @click="handleAdd">
+      </UButton>
+      <UButton v-else type="primary" @click="handleAdd">
         Add
-      </Button>
-      <Button class="mt-3 sm:mt-0" @click="modalVisible = false">
+      </UButton>
+      <UButton @click="modalVisible = false">
         Cancel
-      </Button>
-    </div>
-  </Modal>
+      </UButton>
+    </template>
+  </UModal>
 </template>

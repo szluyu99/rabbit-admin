@@ -18,11 +18,12 @@ interface Order {
 interface ListOptions {
   initForm: {}
   validateForm?: () => boolean
-  queryFn: (params: QueryParams) => Promise<QueryResult>
-  editFn: (item: EditItem) => Promise<void>
-  addFn: (form: any) => Promise<void> // | boolean
-  deleteFn: (id: string | number) => Promise<void>
-  batchFn: (form: string[]) => Promise<void>
+  queryFn?: ((params: QueryParams) => Promise<QueryResult>) | Function | null
+  editFn?: (item: EditItem) => Promise<void>
+  addFn?: (form: any) => Promise<void> // | boolean
+  deleteFn?: (id: string | number) => Promise<void>
+  batchFn?: (form: string[]) => Promise<void>
+  afterQuery: Function | null
   extraParams: any
 }
 
@@ -43,7 +44,7 @@ interface QueryResult {
   page?: number
   limit?: number
   keyword?: string
-  total: number
+  total?: number
   items?: any[]
 }
 
@@ -54,6 +55,7 @@ export default function useTable({
   deleteFn,
   batchFn,
   queryFn,
+  afterQuery,
   extraParams = {},
 }: ListOptions) {
   // table
@@ -83,10 +85,14 @@ export default function useTable({
 
   function handleShowEdit(row: any): void {
     modalVisible.value = true
-    form.value = { ...row }
+    form.value = { ...initForm, ...row }
   }
 
   async function handleQuery(): Promise<void> {
+    // console.log(typeof queryFn)
+    if (!queryFn)
+      return
+
     selectedIds.value = []
     loading.value = true
     try {
@@ -98,8 +104,13 @@ export default function useTable({
         orders: orders.value,
         ...queryParams,
       })
-      total.value = resp.total
-      list.value = resp.items ?? []
+
+      if (resp?.total)
+        total.value = resp.total
+      if (resp?.items)
+        list.value = resp.items ?? []
+
+      afterQuery && afterQuery()
 
       // Empty data found and not on the first page
       if (list.value.length === 0 && page.value !== 1) {
@@ -109,7 +120,6 @@ export default function useTable({
     }
     catch (err: any) {
       console.error(err)
-      // alerter.error(err)
     }
     finally {
       setTimeout(() => loading.value = false, 100)
@@ -122,6 +132,9 @@ export default function useTable({
   }
 
   async function handleEdit(item: EditItem): Promise<void> {
+    if (!editFn)
+      return
+
     try {
       modalLoading.value = true
       await editFn(item)
@@ -130,7 +143,6 @@ export default function useTable({
     }
     catch (err: any) {
       console.error(err)
-      // alerter.error(err)
     }
     finally {
       modalLoading.value = false
@@ -138,6 +150,9 @@ export default function useTable({
   }
 
   async function handleAdd(): Promise<void> {
+    if (!addFn)
+      return
+
     try {
       modalLoading.value = true
       await addFn(form.value)
@@ -146,7 +161,6 @@ export default function useTable({
     }
     catch (err: any) {
       console.error(err)
-      // alerter.error(err)
     }
     finally {
       modalLoading.value = false
@@ -154,6 +168,9 @@ export default function useTable({
   }
 
   async function handleDelete(id: number | string): Promise<void> {
+    if (!deleteFn)
+      return
+
     useConfirm({
       title: 'Delete Confirm',
       content: 'Are you sure you want to delete this? This action cannot be undone.',
@@ -164,13 +181,17 @@ export default function useTable({
           handleQuery()
         }
         catch (err: any) {
-          alert(err)
+          console.error(err)
         }
       },
     })
   }
 
+  // TODO: optimize handleBatch && handleBatchDelete
   async function handleBatch(ids: number[] | string[]): Promise<void> {
+    if (!batchFn)
+      return
+
     useConfirm({
       title: 'Delete Confirm',
       content: 'Are you sure you want to delete all? This action cannot be undone.',
@@ -180,7 +201,28 @@ export default function useTable({
           handleQuery()
         }
         catch (err: any) {
-          alert(err)
+          console.error(err)
+        }
+      },
+    })
+  }
+
+  async function handleBatchDelete(ids: number[] | string[]): Promise<void> {
+    if (!deleteFn)
+      return
+
+    useConfirm({
+      title: 'Delete Confirm',
+      content: 'Are you sure you want to delete all? This action cannot be undone.',
+      onOk: async () => {
+        try {
+          await Promise.all(ids.map(id => deleteFn(id)))
+        }
+        catch (err) {
+          console.error(err)
+        }
+        finally {
+          handleQuery()
         }
       },
     })
@@ -244,6 +286,7 @@ export default function useTable({
     handleShowAdd,
     handleDelete,
     handleBatch,
+    handleBatchDelete,
     handleReset,
   }
 }
