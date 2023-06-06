@@ -1,7 +1,5 @@
 <script lang="ts" setup>
-import { ref } from 'vue'
-
-const currentYear = ref<number>(new Date().getFullYear())
+const currentYear = new Date().getFullYear()
 </script>
 
 <template>
@@ -11,7 +9,7 @@ const currentYear = ref<number>(new Date().getFullYear())
     </p>
 
     <div class="flex">
-      <a href="https://github.com/cherryful" target="_blank" class="mr-6 hover:text-gray-900">Our Team</a>
+      <a href="https://github.com/cherryful" target="_blank" class="mr-6 hover:text-gray-900">Our Organization</a>
       <a href="https://github.com/szluyu99" target="_blank" class="hover:text-gray-900">About Me</a>
     </div>
   </div>

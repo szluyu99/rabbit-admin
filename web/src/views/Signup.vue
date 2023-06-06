@@ -42,7 +42,7 @@ async function doSignup(e: Event) {
         Free Sign Up
       </h2>
       <p class="mt-2 text-center text-sm text-gray-600">
-        Create your account, it takes less than a mintue
+        Create your account, it takes less than a minute
       </p>
     </div>
 

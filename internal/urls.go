@@ -53,6 +53,7 @@ func (m *ServerManager) RegisterHandlers(r *gin.Engine) error {
 	return nil
 }
 
+// TODO: use group
 func (m *ServerManager) getDB(ctx *gin.Context, isCreate bool) *gorm.DB {
 	if isCreate {
 		return m.db

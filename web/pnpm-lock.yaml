@@ -20,9 +20,6 @@ dependencies:
   pinia:
     specifier: ^2.0.35
     version: 2.0.35(typescript@4.9.5)(vue@3.2.47)
-  pinia-plugin-persistedstate:
-    specifier: ^3.1.0
-    version: 3.1.0(pinia@2.0.35)
   unocss-ui:
     specifier: 0.0.3-alpha.4
     version: 0.0.3-alpha.4
@@ -43,9 +40,6 @@ devDependencies:
   '@iconify-json/mdi':
     specifier: ^1.1.51
     version: 1.1.51
-  '@julr/unocss-preset-forms':
-    specifier: ^0.0.5
-    version: 0.0.5(unocss@0.50.8)
   '@types/lodash-es':
     specifier: ^4.17.7
     version: 4.17.7
@@ -589,16 +583,6 @@ packages:
     dependencies:
       '@jridgewell/resolve-uri': 3.1.0
       '@jridgewell/sourcemap-codec': 1.4.14
-    dev: true
-
-  /@julr/unocss-preset-forms@0.0.5(unocss@0.50.8):
-    resolution: {integrity: sha512-lUMhKc8KooObDWIs0wyqh903ix5a6PRHtq1RAszhyEoDR2aqbnfSXnv0QiG2lDp2AWafioNbgquFGiUyyJCDVg==}
-    engines: {node: '>=16'}
-    peerDependencies:
-      unocss: '>= 0.31.13 < 1'
-    dependencies:
-      mini-svg-data-uri: 1.4.4
-      unocss: 0.50.8(postcss@8.4.23)(vite@4.3.5)
     dev: true
 
   /@nodelib/fs.scandir@2.1.5:
@@ -3470,11 +3454,6 @@ packages:
     engines: {node: '>=4'}
     dev: true
 
-  /mini-svg-data-uri@1.4.4:
-    resolution: {integrity: sha512-r9deDe9p5FJUPZAk3A59wGH7Ii9YrjjWw0jmw/liSbHl2CHiyXj6FcDXDu2K3TjVAXqiJdaw3xxwlZZr9E6nHg==}
-    hasBin: true
-    dev: true
-
   /minimatch@3.1.2:
     resolution: {integrity: sha512-J7p63hRiAjw1NDEww1W7i37+ByIrOWO5XQQAzZ3VOcL0PNybwpfmV/N05zFAzwQ9USyEcX6t3UO+K5aqBQOIHw==}
     dependencies:
@@ -4019,14 +3998,6 @@ packages:
     resolution: {integrity: sha512-JU3teHTNjmE2VCGFzuY8EXzCDVwEqB2a8fsIvwaStHhAWJEeVd1o1QD80CU6+ZdEXXSLbSsuLwJjkCBWqRQUVA==}
     engines: {node: '>=8.6'}
     dev: true
-
-  /pinia-plugin-persistedstate@3.1.0(pinia@2.0.35):
-    resolution: {integrity: sha512-8UN+vYMEPBdgNLwceY08mi5olI0wkYaEb8b6hD6xW7SnBRuPydWHlEhZvUWgNb/ibuf4PvufpvtS+dmhYjJQOw==}
-    peerDependencies:
-      pinia: ^2.0.0
-    dependencies:
-      pinia: 2.0.35(typescript@4.9.5)(vue@3.2.47)
-    dev: false
 
   /pinia@2.0.35(typescript@4.9.5)(vue@3.2.47):
     resolution: {integrity: sha512-P1IKKQWhxGXiiZ3atOaNI75bYlFUbRxtJdhPLX059Z7+b9Z04rnTZdSY8Aph1LA+/4QEMAYHsTQ638Wfe+6K5g==}

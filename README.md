@@ -27,7 +27,7 @@ In addition to the basic technology stack, it is mainly based on the author's ot
 Frontend technology stack:
 - [Vue3](https://vuejs.org/) + [Vue Router](https://router.vuejs.org/) + [Pinia](https://pinia.vuejs.org/) + [VueUse](https://vueuse.org/)
 - [UnoCSS](https://github.com/unocss/unocss) + [UnoCSS UI](https://github.com/cherryful/unocss-ui) 
-- [Eslint](https://eslint.org/) + [@antfu/eslint-config](https://github.com/antfu/eslint-config)，不使用 Prettier
+- [Eslint](https://eslint.org/) + [@antfu/eslint-config](https://github.com/antfu/eslint-config) + @unocss/eslint-config，no Prettier
 
 Backend technology stack:
 - [Gin](https://gin-gonic.com/) + [Gorm](https://gorm.io/)

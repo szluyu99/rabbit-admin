@@ -1,6 +1,5 @@
 import { createApp } from 'vue'
 import { UToast } from 'unocss-ui'
-// import UToast from '@/components/ui/Toast.vue'
 
 type ToastCtx = InstanceType<typeof UToast>
 type ToastProps = ToastCtx['$props']

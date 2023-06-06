@@ -95,8 +95,6 @@ github.com/stretchr/testify v1.8.0/go.mod h1:yNjHg4UonilssWZ8iaSj1OCr/vHnekPRkoO
 github.com/stretchr/testify v1.8.1/go.mod h1:w2LPCIKwWwSfY2zedu0+kehJoqGctiVI29o6fzry7u4=
 github.com/stretchr/testify v1.8.2 h1:+h33VjcLVPDHtOdpUCuF+7gSuG3yGIftsP1YvFihtJ8=
 github.com/stretchr/testify v1.8.2/go.mod h1:w2LPCIKwWwSfY2zedu0+kehJoqGctiVI29o6fzry7u4=
-github.com/szluyu99/rabbit v0.0.0-20230605085734-5b05999293ac h1:lMelt/Q1EqpgSHqO7QtYcqW1lKvNhiPh4F1udqKiShU=
-github.com/szluyu99/rabbit v0.0.0-20230605085734-5b05999293ac/go.mod h1:1Pvv87/CoJK1+ZVCAgatg9YAnrBZpcmNfG79wuEQOBA=
 github.com/szluyu99/rabbit v0.0.0-20230605154158-b56c956cf20f h1:f1Tb2wOrgzW/5syZ4YNABey4ZlmOM3skt1wOEtQIU+E=
 github.com/szluyu99/rabbit v0.0.0-20230605154158-b56c956cf20f/go.mod h1:1Pvv87/CoJK1+ZVCAgatg9YAnrBZpcmNfG79wuEQOBA=
 github.com/twitchyliquid64/golang-asm v0.15.1 h1:SU5vSMR7hnwNxj24w34ZyCi/FmDZTkS4MhqMhdFk5YI=
