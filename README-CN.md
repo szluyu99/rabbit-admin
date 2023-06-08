@@ -104,3 +104,11 @@ pnpm run dev
 - `CREATE_DEFAULT_ROLE`: 创建用户时的默认角色名称, 需要在 Role 中存在
 
 > 如果使用 MySQL，可以直接导入根目录下的 rabbit_admin.sql
+> - 超级管理员账号：admin@test.com, 123456
+> - 普通用户账号: user@test.com, 123456
+
+5. 退出当前账号，或者打开一个新的浏览器（或无痕浏览），注册一个新账号并登录
+
+6. 新建的账户的默认权限为 user（Config 页面中设置的 `CREATE_DEFAULT_ROLE`）
+
+7. 默认没有给角色分配权限的话，新建的账户只能访问 `Anonymous` 权限的 API

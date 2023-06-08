@@ -57,6 +57,9 @@ onMounted(() => {
             Name
           </th>
           <th scope="col" class="table-th">
+            Article Count
+          </th>
+          <th scope="col" class="table-th">
             CreatedAt
           </th>
           <th scope="col" class="table-th">
@@ -67,6 +70,9 @@ onMounted(() => {
         <template #rows="{ row }">
           <td class="table-td font-bold">
             {{ row.name }}
+          </td>
+          <td class="table-td">
+            {{ row.article_count }}
           </td>
           <td class="table-td whitespace-nowrap">
             <Date :value="row.created_at" />

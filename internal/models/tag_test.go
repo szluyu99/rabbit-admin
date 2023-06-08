@@ -33,3 +33,21 @@ func TestGetTagIdsByNames(t *testing.T) {
 	assert.Nil(t, err)
 	assert.Equal(t, []uint{1, 2, 3}, ids)
 }
+
+func TestGetTagList(t *testing.T) {
+	db := initDB()
+
+	db.Create(&Tag{Name: "t1"})
+	db.Create(&Article{Title: "a1"})
+	db.Create(&Article{Title: "a2"})
+	db.Create(&Article{Title: "a3"})
+	db.Create(&ArticleTag{TagID: 1, ArticleID: 1})
+	db.Create(&ArticleTag{TagID: 1, ArticleID: 2})
+	db.Create(&ArticleTag{TagID: 1, ArticleID: 3})
+
+	list, count, err := GetTagList(db, 1, 10, "")
+	assert.Nil(t, err)
+	assert.Equal(t, 1, count)
+	assert.Equal(t, "t1", list[0].Name)
+	assert.Equal(t, 3, len(list[0].Articles))
+}

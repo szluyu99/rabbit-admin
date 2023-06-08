@@ -11,8 +11,8 @@ import api from '@/api'
 
 const initForm = ref({
   name: '',
-  p1: '', // uri
-  p2: 'GET', // method
+  uri: '',
+  method: 'GET',
   parentId: 0,
 })
 
@@ -176,11 +176,11 @@ const methodTypes = {
             {{ sub.name }}
           </td>
           <td class="table-td">
-            {{ sub.p1 }}
+            {{ sub.uri }}
           </td>
           <td class="table-td">
-            <UTag v-if="sub.parentId" :type="methodTypes[sub.p2]">
-              {{ sub.p2 }}
+            <UTag v-if="sub.parentId" :type="methodTypes[sub.method]">
+              {{ sub.method }}
             </UTag>
           </td>
           <td class="table-td">
@@ -221,14 +221,14 @@ const methodTypes = {
     <div class="space-y-3">
       <div class="space-y-3">
         <UInput v-model="form.name" label="Name" />
-        <UInput v-model="form.p1" label="Uri" />
+        <UInput v-model="form.uri" label="Uri" />
         <p>
           Method
         </p>
         <div class="flex gap-3">
           <URadio
             v-for="item in methods" :key="item"
-            v-model="form.p2"
+            v-model="form.method"
             :type="methodTypes[item]"
             :value="item"
           >

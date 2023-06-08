@@ -17,11 +17,12 @@ type Tag struct {
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
 	// GroupID   uint         `json:"group_id"`
-	// Group     rabbit.Group `json:"-"`
 
 	Name string `json:"name" gorm:"type:varchar(20);not null;uniqueIndex"`
 
-	// Articles []*Article `gorm:"many2many:article_tag;" json:"articles"`
+	// for association
+	Articles []*Article `json:"articles" gorm:"many2many:article_tags;"`
+	// Group     rabbit.Group `json:"-"`
 }
 
 // check if tag is used by article
@@ -65,4 +66,13 @@ func GetTagIdsByNames(db *gorm.DB, names []string) ([]uint, error) {
 		return nil, result.Error
 	}
 	return ids, nil
+}
+
+func GetTagList(db *gorm.DB, page, limit int, keyword string) ([]Tag, int, error) {
+	list := make([]Tag, 0)
+	db = db.Model(&Tag{}).Preload("Articles")
+	if keyword != "" {
+		db = db.Where("name LIKE ?", "%"+keyword+"%")
+	}
+	return FindWithCount(db, list, (page-1)*limit, limit)
 }

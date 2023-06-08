@@ -28,6 +28,9 @@ func (m *ServerManager) RegisterHandlers(r *gin.Engine) error {
 		ar.GET("/article/:key", m.handleGetArticle)
 		ar.POST("/article", m.handleQueryArticle)
 		ar.POST("/article/save_or_update", m.handleSaveOrUpdateArticle)
+
+		ar.POST("/category", m.handleQueryCategory)
+		ar.POST("/tag", m.handleQueryTag)
 	}
 	{
 		ar.POST("/user", m.handleQueryUser)

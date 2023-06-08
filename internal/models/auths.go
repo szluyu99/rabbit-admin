@@ -5,6 +5,7 @@ import (
 	"gorm.io/gorm"
 )
 
+// TODO: load from config
 func InitDefaultPermissions(db *gorm.DB) error {
 	// role
 	{
@@ -13,10 +14,10 @@ func InitDefaultPermissions(db *gorm.DB) error {
 			return err
 		}
 		ps := []*rabbit.Permission{
-			{Name: "role.query", P1: "/role", P2: "POST", ParentID: p.ID, Anonymous: true},
-			{Name: "role.create", P1: "/role", P2: "PUT", ParentID: p.ID},
-			{Name: "role.delete", P1: "/role/:key", P2: "DELETE", ParentID: p.ID},
-			{Name: "role.update", P1: "/role/:key", P2: "PATCH", ParentID: p.ID},
+			{Name: "role.query", Uri: "/role", Method: "POST", ParentID: p.ID, Anonymous: true},
+			{Name: "role.create", Uri: "/role", Method: "PUT", ParentID: p.ID},
+			{Name: "role.delete", Uri: "/role/:key", Method: "DELETE", ParentID: p.ID},
+			{Name: "role.update", Uri: "/role/:key", Method: "PATCH", ParentID: p.ID},
 		}
 		for _, v := range ps {
 			if err := db.Where("name", v.Name).FirstOrCreate(v).Error; err != nil {
@@ -31,10 +32,10 @@ func InitDefaultPermissions(db *gorm.DB) error {
 			return err
 		}
 		ps := []*rabbit.Permission{
-			{Name: "permission.query", P1: "/permission", P2: "POST", ParentID: p.ID, Anonymous: true},
-			{Name: "permission.create", P1: "/permission", P2: "PUT", ParentID: p.ID},
-			{Name: "permission.delete", P1: "/permission/:key", P2: "DELETE", ParentID: p.ID},
-			{Name: "permission.update", P1: "/permission/:key", P2: "PATCH", ParentID: p.ID},
+			{Name: "permission.query", Uri: "/permission", Method: "POST", ParentID: p.ID, Anonymous: true},
+			{Name: "permission.create", Uri: "/permission", Method: "PUT", ParentID: p.ID},
+			{Name: "permission.delete", Uri: "/permission/:key", Method: "DELETE", ParentID: p.ID},
+			{Name: "permission.update", Uri: "/permission/:key", Method: "PATCH", ParentID: p.ID},
 		}
 		for _, v := range ps {
 			if err := db.Where("name", v.Name).FirstOrCreate(v).Error; err != nil {
@@ -49,8 +50,8 @@ func InitDefaultPermissions(db *gorm.DB) error {
 			return err
 		}
 		ps := []*rabbit.Permission{
-			{Name: "user.query", P1: "/user", P2: "POST", ParentID: p.ID, Anonymous: true},
-			{Name: "user.role", P1: "/user/role", P2: "PATCH", ParentID: p.ID},
+			{Name: "user.query", Uri: "/user", Method: "POST", ParentID: p.ID, Anonymous: true},
+			{Name: "user.role", Uri: "/user/role", Method: "PATCH", ParentID: p.ID},
 		}
 		for _, v := range ps {
 			if err := db.Where("name", v.Name).FirstOrCreate(v).Error; err != nil {
@@ -65,10 +66,10 @@ func InitDefaultPermissions(db *gorm.DB) error {
 			return err
 		}
 		ps := []*rabbit.Permission{
-			{Name: "config.query", P1: "/config", P2: "POST", ParentID: p.ID, Anonymous: true},
-			{Name: "config.create", P1: "/config", P2: "PUT", ParentID: p.ID},
-			{Name: "config.delete", P1: "/config/:key", P2: "DELETE", ParentID: p.ID},
-			{Name: "config.update", P1: "/config/:key", P2: "PATCH", ParentID: p.ID},
+			{Name: "config.query", Uri: "/config", Method: "POST", ParentID: p.ID, Anonymous: true},
+			{Name: "config.create", Uri: "/config", Method: "PUT", ParentID: p.ID},
+			{Name: "config.delete", Uri: "/config/:key", Method: "DELETE", ParentID: p.ID},
+			{Name: "config.update", Uri: "/config/:key", Method: "PATCH", ParentID: p.ID},
 		}
 		for _, v := range ps {
 			if err := db.Where("name", v.Name).FirstOrCreate(v).Error; err != nil {
@@ -83,10 +84,10 @@ func InitDefaultPermissions(db *gorm.DB) error {
 			return err
 		}
 		ps := []*rabbit.Permission{
-			{Name: "article.get", P1: "/article/:key", P2: "GET", ParentID: p.ID, Anonymous: true},
-			{Name: "article.query", P1: "/article", P2: "POST", ParentID: p.ID, Anonymous: true},
-			{Name: "article.create", P1: "/article", P2: "PUT", ParentID: p.ID},
-			{Name: "article.save_or_update", P1: "/article/save_or_update", P2: "POST", ParentID: p.ID},
+			{Name: "article.get", Uri: "/article/:key", Method: "GET", ParentID: p.ID, Anonymous: true},
+			{Name: "article.query", Uri: "/article", Method: "POST", ParentID: p.ID, Anonymous: true},
+			{Name: "article.create", Uri: "/article", Method: "PUT", ParentID: p.ID},
+			{Name: "article.save_or_update", Uri: "/article/save_or_update", Method: "POST", ParentID: p.ID},
 		}
 		for _, v := range ps {
 			if err := db.Where("name", v.Name).FirstOrCreate(v).Error; err != nil {
@@ -101,11 +102,11 @@ func InitDefaultPermissions(db *gorm.DB) error {
 			return err
 		}
 		ps := []*rabbit.Permission{
-			{Name: "tag.get", P1: "/tag/:key", P2: "GET", ParentID: p.ID, Anonymous: true},
-			{Name: "tag.query", P1: "/tag", P2: "POST", ParentID: p.ID, Anonymous: true},
-			{Name: "tag.create", P1: "/tag", P2: "PUT", ParentID: p.ID},
-			{Name: "tag.update", P1: "/tag", P2: "PATCH", ParentID: p.ID},
-			{Name: "tag.all", P1: "/tag/all", P2: "GET", ParentID: p.ID, Anonymous: true},
+			{Name: "tag.get", Uri: "/tag/:key", Method: "GET", ParentID: p.ID, Anonymous: true},
+			{Name: "tag.query", Uri: "/tag", Method: "POST", ParentID: p.ID, Anonymous: true},
+			{Name: "tag.create", Uri: "/tag", Method: "PUT", ParentID: p.ID},
+			{Name: "tag.update", Uri: "/tag", Method: "PATCH", ParentID: p.ID},
+			{Name: "tag.all", Uri: "/tag/all", Method: "GET", ParentID: p.ID, Anonymous: true},
 		}
 		for _, v := range ps {
 			if err := db.Where("name", v.Name).FirstOrCreate(v).Error; err != nil {
@@ -121,11 +122,11 @@ func InitDefaultPermissions(db *gorm.DB) error {
 		}
 
 		ps := []*rabbit.Permission{
-			{Name: "category.get", P1: "/category/:key", P2: "GET", ParentID: p.ID, Anonymous: true},
-			{Name: "category.query", P1: "/category", P2: "POST", ParentID: p.ID, Anonymous: true},
-			{Name: "category.create", P1: "/category", P2: "PUT", ParentID: p.ID},
-			{Name: "category.update", P1: "/category", P2: "PATCH", ParentID: p.ID},
-			{Name: "category.all", P1: "/category/all", P2: "GET", ParentID: p.ID, Anonymous: true},
+			{Name: "category.get", Uri: "/category/:key", Method: "GET", ParentID: p.ID, Anonymous: true},
+			{Name: "category.query", Uri: "/category", Method: "POST", ParentID: p.ID, Anonymous: true},
+			{Name: "category.create", Uri: "/category", Method: "PUT", ParentID: p.ID},
+			{Name: "category.update", Uri: "/category", Method: "PATCH", ParentID: p.ID},
+			{Name: "category.all", Uri: "/category/all", Method: "GET", ParentID: p.ID, Anonymous: true},
 		}
 		for _, v := range ps {
 			if err := db.Where("name", v.Name).FirstOrCreate(v).Error; err != nil {
@@ -154,11 +155,11 @@ func CreateWebObjectPermissions(db *gorm.DB, name string) (*rabbit.Permission, e
 	}
 
 	ps := []*rabbit.Permission{
-		{Name: name + ".get", P1: "/" + name, P2: "GET", ParentID: p.ID},
-		{Name: name + ".query", P1: "/" + name, P2: "POST", ParentID: p.ID},
-		{Name: name + ".create", P1: "/" + name, P2: "PUT", ParentID: p.ID},
-		{Name: name + ".delete", P1: "/" + name, P2: "DELETE", ParentID: p.ID},
-		{Name: name + ".update", P1: "/" + name, P2: "PATCH", ParentID: p.ID},
+		{Name: name + ".get", Uri: "/" + name, Method: "GET", ParentID: p.ID},
+		{Name: name + ".query", Uri: "/" + name, Method: "POST", ParentID: p.ID},
+		{Name: name + ".create", Uri: "/" + name, Method: "PUT", ParentID: p.ID},
+		{Name: name + ".delete", Uri: "/" + name, Method: "DELETE", ParentID: p.ID},
+		{Name: name + ".update", Uri: "/" + name, Method: "PATCH", ParentID: p.ID},
 	}
 
 	for _, v := range ps {

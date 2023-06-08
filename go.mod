@@ -5,7 +5,7 @@ go 1.20
 require (
 	github.com/gin-gonic/gin v1.9.0
 	github.com/stretchr/testify v1.8.2
-	github.com/szluyu99/rabbit v0.0.0-20230605154158-b56c956cf20f
+	github.com/szluyu99/rabbit v0.0.0-20230607161306-942472d6f4a6
 	gorm.io/gorm v1.25.1
 )
 

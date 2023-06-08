@@ -8,15 +8,16 @@ import (
 )
 
 type Category struct {
-	ID        int       `json:"id" gorm:"primarykey"`
+	ID        uint      `json:"id" gorm:"primarykey"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
 	// GroupID   uint         `json:"group_id"`
-	// Group     rabbit.Group `json:"-"`
 
 	Name string `gorm:"type:varchar(20);not null" json:"name"`
 
-	// Articles []Article `gorm:"foreignKey:CategoryId"`
+	// for association
+	Articles []Article `gorm:"foreignKey:CategoryId"`
+	// Group     rabbit.Group `json:"-"`
 }
 
 // check if category is used by article
@@ -30,4 +31,13 @@ func (c *Category) BeforeDelete(tx *gorm.DB) error {
 		return errors.New("the category is used by article")
 	}
 	return nil
+}
+
+func GetCategoryList(db *gorm.DB, page, limit int, keyword string) ([]Category, int, error) {
+	list := make([]Category, 0)
+	db = db.Model(&Category{}).Preload("Articles")
+	if keyword != "" {
+		db = db.Where("name LIKE ?", "%"+keyword+"%")
+	}
+	return FindWithCount(db, list, (page-1)*limit, limit)
 }

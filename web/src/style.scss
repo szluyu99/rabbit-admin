@@ -1,0 +1,7 @@
+.table-th {
+  @apply col-span-3 px-3 py-3.5 pl-4 sm:pl-10 text-sm font-semibold text-gray-900 text-left;
+}
+
+.table-td {
+  @apply px-3.5 py-3 pl-4 sm:pl-10 text-sm text-gray-500 text-left;
+}

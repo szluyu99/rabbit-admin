@@ -83,7 +83,7 @@ const typeOptions = [
 </script>
 
 <template>
-  <div class="max-w-7xl rounded bg-white p-5 shadow space-y-4">
+  <div class="max-w-8xl rounded bg-white p-5 shadow space-y-4">
     <div class="flex items-center justify-between gap-4">
       <UInput v-model="title" placeholder="Article title" />
       <UButton type="warning">

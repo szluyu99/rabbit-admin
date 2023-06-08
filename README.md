@@ -103,3 +103,11 @@ After logging in with the super administrator account, you can create roles on t
 - CREATE_DEFAULT_ROLE: the name of the default role when creating a user, which needs to exist in Role.
 
 > If using MySQL, you can directly import the `rabbit_admin.sql`.
+> - super user account: admin@test.com, 123456
+> - regular user account: user@test.com, 123456
+
+5. Log out of the current account, or open a new browser (or incognito window) and register a new account, then log in.
+
+6. The default permission level for a new account is "user" (set by `CREATE_DEFAULT_ROLE` in the Config page).
+
+7. If no permissions are assigned to a role by default, a newly created account can only access APIs with "Anonymous" permissions.

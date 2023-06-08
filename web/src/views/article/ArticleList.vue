@@ -127,6 +127,11 @@ const typeTypes = {
   reprint: 'secondary',
   translation: 'accent',
 }
+
+const statusTypes = {
+  public: 'success',
+  private: 'warning',
+}
 </script>
 
 <template>
@@ -236,11 +241,14 @@ const typeTypes = {
           <th scope="col" class="table-th">
             IsTop
           </th>
+          <th scope="col" class="table-th">
+            Status
+          </th>
           <th scope="col" class="col-span-3 px-4 py-3.5 text-sm font-semibold text-gray-900" />
         </template>
         <template #rows="{ row }">
           <td class="table-td">
-            <img class="min-w-20" :src="row.cover" alt="">
+            <img class="max-w-40 min-w-20" :src="row.cover" alt="">
           </td>
           <td class="table-td max-w-64">
             {{ row.title }}
@@ -271,6 +279,11 @@ const typeTypes = {
                 @update:model-value="handleToggleTop(row, $event)"
               />
             </div>
+          </td>
+          <td class="table-td">
+            <UTag :type="statusTypes[row.status]">
+              {{ row.status }}
+            </UTag>
           </td>
           <td class="table-td w-32">
             <div class="flex items-center gap-4 text-xl">

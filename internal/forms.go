@@ -1,5 +1,7 @@
 package rabbitadmin
 
+import "github.com/szluyu99/rabbit-admin/internal/models"
+
 func CheckPageLimit(page, limit int) (int, int) {
 	if page < 1 {
 		page = 1
@@ -58,4 +60,14 @@ type RoleForm struct {
 type UserForm struct {
 	ID      uint   `json:"id"`
 	RoleIds []uint `json:"role_ids"`
+}
+
+type CategoryQueryResult struct {
+	models.Category
+	ArticleCount int `json:"article_count"`
+}
+
+type TagQueryResult struct {
+	models.Tag
+	ArticleCount int `json:"article_count"`
 }
