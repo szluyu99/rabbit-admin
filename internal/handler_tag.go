@@ -4,45 +4,46 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/szluyu99/rabbit"
+	"github.com/restsend/gormpher"
 	"github.com/szluyu99/rabbit-admin/internal/models"
 	"gorm.io/gorm"
 )
 
-func (m *ServerManager) tagObject() rabbit.WebObject {
-	return rabbit.WebObject{
-		Name:        "tag",
-		Model:       &models.Tag{},
-		GetDB:       m.getDB,
-		Editables:   []string{"Name"},
-		Searchables: []string{"Name"},
-		Filterables: []string{"Name"},
-		Orderables:  []string{"CreatedAt"},
-		Views: []rabbit.QueryView{
+func (m *ServerManager) tagObject() gormpher.WebObject {
+	return gormpher.WebObject{
+		Name:         "tag",
+		Model:        &models.Tag{},
+		GetDB:        m.getDB,
+		Pagination:   true,
+		EditFields:   []string{"Name"},
+		SearchFields: []string{"Name"},
+		FilterFields: []string{"Name"},
+		OrderFields:  []string{"CreatedAt"},
+		Views: []gormpher.QueryView{
 			allTagQueryView(),
 		},
-		AllowMethods: rabbit.GET | rabbit.CREATE | rabbit.DELETE | rabbit.EDIT | rabbit.BATCH,
+		AllowMethods: gormpher.GET | gormpher.CREATE | gormpher.DELETE | gormpher.EDIT | gormpher.BATCH,
 	}
 }
 
-func allTagQueryView() rabbit.QueryView {
-	return rabbit.QueryView{
+func allTagQueryView() gormpher.QueryView {
+	return gormpher.QueryView{
 		Name:   "all",
 		Method: http.MethodGet,
-		Prepare: func(db *gorm.DB, c *gin.Context) (*gorm.DB, *rabbit.QueryForm, error) {
-			return db, &rabbit.QueryForm{Page: 1, Limit: -1}, nil
+		Prepare: func(db *gorm.DB, c *gin.Context, pagination bool) (*gorm.DB, *gormpher.QueryForm, error) {
+			return db, &gormpher.QueryForm{Pos: 1, Limit: -1}, nil
 		},
 	}
 }
 
 func (m *ServerManager) handleQueryTag(c *gin.Context) {
-	var form rabbit.QueryForm
+	var form gormpher.QueryForm
 	if err := c.ShouldBindJSON(&form); err != nil {
 		handleError(c, http.StatusBadRequest, err)
 		return
 	}
 
-	list, total, err := models.GetTagList(m.db, form.Page, form.Limit, form.Keyword)
+	list, total, err := models.GetTagList(m.db, form.Pos, form.Limit, form.Keyword)
 	if err != nil {
 		handleError(c, http.StatusInternalServerError, err)
 		return
@@ -63,7 +64,7 @@ func (m *ServerManager) handleQueryTag(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, PageResult[TagQueryResult]{
-		Page:       form.Page,
+		Page:       form.Pos,
 		Limit:      form.Limit,
 		Keyword:    form.Keyword,
 		TotalCount: total,

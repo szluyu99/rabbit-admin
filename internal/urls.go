@@ -2,6 +2,7 @@ package rabbitadmin
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/restsend/gormpher"
 	"github.com/szluyu99/rabbit"
 	"gorm.io/gorm"
 )
@@ -37,21 +38,21 @@ func (m *ServerManager) RegisterHandlers(r *gin.Engine) error {
 		ar.PATCH("/user/role", m.handleUpdateUserRole)
 	}
 
-	objects := []rabbit.WebObject{
+	objects := []gormpher.WebObject{
 		m.tagObject(),
 		m.categoryObject(),
 		m.articleObject(),
 		{
 			Name:         "config",
 			Model:        rabbit.Config{},
-			Editables:    []string{"Key", "Value", "Desc"},
-			Filterables:  []string{"Key", "Value"},
-			Searchables:  []string{"Key", "Desc"},
+			EditFields:   []string{"Key", "Value", "Desc"},
+			FilterFields: []string{"Key", "Value"},
+			SearchFields: []string{"Key", "Desc"},
 			GetDB:        func(c *gin.Context, isCreate bool) *gorm.DB { return m.db },
-			AllowMethods: rabbit.QUERY | rabbit.EDIT | rabbit.DELETE,
+			AllowMethods: gormpher.QUERY | gormpher.EDIT | gormpher.DELETE,
 		},
 	}
-	rabbit.RegisterObjects(ar, objects)
+	gormpher.RegisterObjects(ar, objects)
 
 	return nil
 }
@@ -105,7 +106,7 @@ func handleError(c *gin.Context, code int, err any) {
 // 		return nil
 // 	}
 
-// 	group, err := rabbit.GetFirstGroupByUser(m.db, user.ID)
+// 	group, err := gormpher.GETFirstGroupByUser(m.db, user.ID)
 // 	if err != nil {
 // 		log.Println("get user first group fail: ", user.ID, err)
 // 		return nil

@@ -4,25 +4,26 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/szluyu99/rabbit"
+	"github.com/restsend/gormpher"
 	"github.com/szluyu99/rabbit-admin/internal/models"
 )
 
-func (m *ServerManager) articleObject() rabbit.WebObject {
-	return rabbit.WebObject{
+func (m *ServerManager) articleObject() gormpher.WebObject {
+	return gormpher.WebObject{
 		Name:         "article",
 		Model:        &models.Article{},
 		GetDB:        m.getDB,
-		Editables:    []string{"Title", "Desc", "Content", "Img", "Type", "Status", "IsTop", "IsDelete", "OriginalUrl"},
-		Searchables:  []string{"Name", "Desc"},
-		Filterables:  []string{"Type", "Status", "IsTop", "IsDelete"},
-		AllowMethods: rabbit.BATCH | rabbit.DELETE | rabbit.EDIT,
+		Pagination:   true,
+		EditFields:   []string{"Title", "Desc", "Content", "Img", "Type", "Status", "IsTop", "IsDelete", "OriginalUrl"},
+		SearchFields: []string{"Name", "Desc"},
+		FilterFields: []string{"Type", "Status", "IsTop", "IsDelete"},
+		AllowMethods: gormpher.BATCH | gormpher.DELETE | gormpher.EDIT,
 	}
 }
 
 func (m *ServerManager) handleGetArticle(c *gin.Context) {
 	db := m.db.Preload("Tags").Preload("Category")
-	rabbit.HandleGet[models.Article](c, db, nil)
+	gormpher.HandleGet[models.Article](c, db, nil)
 }
 
 func (m *ServerManager) handleQueryArticle(c *gin.Context) {

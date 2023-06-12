@@ -4,46 +4,47 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/szluyu99/rabbit"
+	"github.com/restsend/gormpher"
 	"github.com/szluyu99/rabbit-admin/internal/models"
 	"gorm.io/gorm"
 )
 
-func (m *ServerManager) categoryObject() rabbit.WebObject {
-	return rabbit.WebObject{
-		Name:        "category",
-		Model:       &models.Category{},
-		GetDB:       m.getDB,
-		Editables:   []string{"Name"},
-		Searchables: []string{"Name"},
-		Filterables: []string{"Name"},
-		Orderables:  []string{"CreatedAt"},
-		Views: []rabbit.QueryView{
+func (m *ServerManager) categoryObject() gormpher.WebObject {
+	return gormpher.WebObject{
+		Name:         "category",
+		Model:        &models.Category{},
+		GetDB:        m.getDB,
+		Pagination:   true,
+		EditFields:   []string{"Name"},
+		SearchFields: []string{"Name"},
+		FilterFields: []string{"Name"},
+		OrderFields:  []string{"CreatedAt"},
+		Views: []gormpher.QueryView{
 			allCategoryQueryView(),
 		},
-		AllowMethods: rabbit.GET | rabbit.CREATE | rabbit.DELETE | rabbit.EDIT | rabbit.BATCH,
+		AllowMethods: gormpher.GET | gormpher.CREATE | gormpher.DELETE | gormpher.EDIT | gormpher.BATCH,
 	}
 }
 
 // GET /category/all
-func allCategoryQueryView() rabbit.QueryView {
-	return rabbit.QueryView{
+func allCategoryQueryView() gormpher.QueryView {
+	return gormpher.QueryView{
 		Name:   "all",
 		Method: http.MethodGet,
-		Prepare: func(db *gorm.DB, c *gin.Context) (*gorm.DB, *rabbit.QueryForm, error) {
-			return db, &rabbit.QueryForm{Page: 1, Limit: -1}, nil
+		Prepare: func(db *gorm.DB, c *gin.Context, pagination bool) (*gorm.DB, *gormpher.QueryForm, error) {
+			return db, &gormpher.QueryForm{Pos: 1, Limit: -1}, nil
 		},
 	}
 }
 
 func (m *ServerManager) handleQueryCategory(c *gin.Context) {
-	var form rabbit.QueryForm
+	var form gormpher.QueryForm
 	if err := c.ShouldBindJSON(&form); err != nil {
 		handleError(c, http.StatusBadRequest, err)
 		return
 	}
 
-	list, total, err := models.GetCategoryList(m.db, form.Page, form.Limit, form.Keyword)
+	list, total, err := models.GetCategoryList(m.db, form.Pos, form.Limit, form.Keyword)
 	if err != nil {
 		handleError(c, http.StatusInternalServerError, err)
 		return
@@ -64,7 +65,7 @@ func (m *ServerManager) handleQueryCategory(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, PageResult[CategoryQueryResult]{
-		Page:       form.Page,
+		Page:       form.Pos,
 		Limit:      form.Limit,
 		Keyword:    form.Keyword,
 		TotalCount: total,
