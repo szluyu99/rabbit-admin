@@ -39,7 +39,7 @@ type Article struct {
 
 	// User *rabbit.User `json:"user" gorm:"foreignkey:UserId"`
 	// Group    *rabbit.Group `json:"-"`
-	Category *Category `json:"category" gorm:"foreignkey:CategoryId"`
+	Category *Category `json:"category" gorm:"foreignKey:CategoryId"`
 	Tags     []*Tag    `json:"tags" gorm:"many2many:article_tag;"`
 }
 

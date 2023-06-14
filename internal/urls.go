@@ -26,7 +26,6 @@ func (m *ServerManager) RegisterHandlers(r *gin.Engine) error {
 		ar.GET("/permission/object/:name", m.handleCreateWebObjectPermissions)
 	}
 	{
-		ar.GET("/article/:key", m.handleGetArticle)
 		ar.POST("/article", m.handleQueryArticle)
 		ar.POST("/article/save_or_update", m.handleSaveOrUpdateArticle)
 

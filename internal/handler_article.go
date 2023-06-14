@@ -17,13 +17,8 @@ func (m *ServerManager) articleObject() gormpher.WebObject {
 		EditFields:   []string{"Title", "Desc", "Content", "Img", "Type", "Status", "IsTop", "IsDelete", "OriginalUrl"},
 		SearchFields: []string{"Name", "Desc"},
 		FilterFields: []string{"Type", "Status", "IsTop", "IsDelete"},
-		AllowMethods: gormpher.BATCH | gormpher.DELETE | gormpher.EDIT,
+		AllowMethods: gormpher.BATCH | gormpher.DELETE | gormpher.EDIT | gormpher.GET,
 	}
-}
-
-func (m *ServerManager) handleGetArticle(c *gin.Context) {
-	db := m.db.Preload("Tags").Preload("Category")
-	gormpher.HandleGet[models.Article](c, db, nil)
 }
 
 func (m *ServerManager) handleQueryArticle(c *gin.Context) {

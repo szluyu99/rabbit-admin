@@ -88,6 +88,8 @@ github.com/quasoft/memstore v0.0.0-20191010062613-2bce066d2b0b h1:aUNXCGgukb4gtY
 github.com/quasoft/memstore v0.0.0-20191010062613-2bce066d2b0b/go.mod h1:wTPjTepVu7uJBYgZ0SdWHQlIas582j6cn2jgk4DDdlg=
 github.com/restsend/gormpher v0.0.0-20230612032906-c570cd224204 h1:dXOgcis8XsdjWZOuLzDIHYXh/a22toxR8l+gTmJItQc=
 github.com/restsend/gormpher v0.0.0-20230612032906-c570cd224204/go.mod h1:4Z+CDePFbt+dDGGdA3T2HycsNZ3w3nb9jEzQ/g5tWKc=
+github.com/restsend/gormpher v0.0.0-20230614030443-c5ac29af326e h1:5bUa4MbxpoNmmh4dTYpC0cdK9AAPuH6jWkxR6ZFIVYY=
+github.com/restsend/gormpher v0.0.0-20230614030443-c5ac29af326e/go.mod h1:4Z+CDePFbt+dDGGdA3T2HycsNZ3w3nb9jEzQ/g5tWKc=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
 github.com/stretchr/objx v0.4.0/go.mod h1:YvHI0jy2hoMjB+UWwv71VJQ9isScKT/TqJzVSSt89Yw=
 github.com/stretchr/objx v0.5.0/go.mod h1:Yh+to48EsGEfYuaHDzXPcE3xhTkx73EhmCGUpEOglKo=
